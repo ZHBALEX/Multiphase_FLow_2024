@@ -1,3 +1,5 @@
+clc
+clear all
 %===============================================================
 % CodeC3-frt-st-RK3.m
 % A very simple Navier-Stokes solver for a drop falling in a
@@ -13,9 +15,9 @@
 
 
 Lx=1.0;Ly=1.0;gx=0.0;gy=-100.0; sigma=100; % Domain size and
-rho1=1.0; rho2=2.0; m1=0.01; m2=0.02;     % physical variables
+% rho1=1.0; rho2=2.0; m1=0.01; m2=0.02;     % physical variables
 unorth=0; usouth=0; veast=0; vwest=0; time=0.0; 
-rad=0.15; xc=0.5; yc=0.7;          % Initial drop size and location
+% rad=0.15; xc=0.5; yc=0.7;          % Initial drop size and location
 
 %===============================================================
 % 1: o (liquid )     2:d (drop)
@@ -28,10 +30,9 @@ Eo = 12; Oh = 0.05;
 D =2; 
 
 Lx = 10*D ; Ly = 15 *D;
-xc = Lx/2 ; yc = 0.7 * Ly;
+xc = Lx/2 ; yc = 0.9 * Ly;
 
-
-gy = -1; sigma = 300;
+sigma = 300;
 rhoo = 1 ; rhod = 10;
 
 
@@ -40,25 +41,18 @@ mud = sqrt(6000)* Oh; muo = sqrt(600)* Oh;
 az = -100 * Eo /12;
 
 t_sc = sqrt(-az/D);
-
-
 t_control = 11.19;
-
-
-
-
-
 
 % transfer:
 rad=D/2; 
 rho1 = rhoo ; rho2 = rhod;
-mu1 = muo; mu2 = mud;
+m1 = muo; m2 = mud;
 gy = az;
 
 
 %===============================================================
 %-------------------- Numerical variables ----------------------
-nx=32;ny=32;dt=0.001;nstep=400; maxit=200;maxError=0.001;beta=1.5; Nf=100;
+nx=32;ny=32;dt=0.001;nstep=40000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 
 %===============================================================
@@ -96,12 +90,12 @@ end,end
 
 for l=1:Nf+2, xf(l)=xc-rad*sin(2.0*pi*(l-1)/(Nf));      % Initialize 
               yf(l)=yc+rad*cos(2.0*pi*(l-1)/(Nf));end   % the Front
-                                          
-hold off,contour(x,y,chi'),axis equal,axis([0 Lx 0 Ly]);
-hold on;plot(xf(1:Nf),yf(1:Nf),'k','linewidth',3);pause(0.01)               
+% 
+% hold off,contour(x,y,chi'),axis equal,axis([0 Lx 0 Ly]);
+% hold on;plot(xf(1:Nf),yf(1:Nf),'k','linewidth',3);pause(0.01)               
 
 %---------------------- START TIME LOOP ------------------------
-for is=1:nstep,is
+for is=1:nstep,is;
   un=u; vn=v; rn=r; mn=m; xfn=xf; yfn=yf;  % Higher order
   for substep=1:3                          % in time
 
@@ -317,16 +311,16 @@ for is=1:nstep,is
   CentroidX(is)=CentroidX(is)/Area(is);CentroidY(is)=CentroidY(is)/Area(is);
 
 %------------------ Plot the results ---------------------------
-  time=time+dt                   % plot the results
-  
-  uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
-  vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
+  time=time+dt;                  % plot the results
+  % 
+  % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+  % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-  hold off,contour(x,y,r'),axis equal,axis([Lx/2 Lx 0 Ly]);
+  hold off,contour(x,y,r'),axis equal,axis([Lx/2 Lx*4/5 0 Ly]);
   hold on;quiver(xh,yh,uu',vv','r');
-  plot(xf(1:Nf),yf(1:Nf),'k','linewidth',5);pause(0.01)
+  plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
     
-  time * t_sc
+  t= time * t_sc
   if time * t_sc == t_control
       saveas(gcf, ['velocity_field_contour_' t_control '.png']);  % Save as PNG image
   end
