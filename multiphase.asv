@@ -39,10 +39,7 @@ rhoo = 1 ; rhod = 10;
 mud = sqrt(6000)* Oh; muo = sqrt(600)* Oh;
 az = -100 * Eo /12;
 
-t_sc = sqrt(-az/D);
-
-
-t_control = 11.19;
+t_sc = sqrt(az/D);
 
 
 
@@ -322,14 +319,12 @@ for is=1:nstep,is
   uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
   vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-  hold off,contour(x,y,r'),axis equal,axis([Lx/2 Lx 0 Ly]);
+  hold off,contour(x,y,r'),axis equal,axis([0 Lx 0 Ly]);
   hold on;quiver(xh,yh,uu',vv','r');
   plot(xf(1:Nf),yf(1:Nf),'k','linewidth',5);pause(0.01)
-    
-  time * t_sc
+
   if time * t_sc == t_control
       saveas(gcf, ['velocity_field_contour_' t_control '.png']);  % Save as PNG image
-  end
 
 end                  % End of time step
 
