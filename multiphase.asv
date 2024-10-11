@@ -46,13 +46,14 @@ t_control = 11.19;
 % transfer:
 rad=D/2; 
 rho1 = rhoo ; rho2 = rhod;
-m1 = muo; mu=2 = mud;
-gy = az;
+m1 = muo; m2 = mud;
+gy = az;gx=0.0;
 
 
 %===============================================================
 %-------------------- Numerical variables ----------------------
-nx=32;ny=32;dt=0.001;nstep=400; maxit=200;maxError=0.01;beta=1.5; Nf=100;
+% nx=32;ny=32;
+dt=0.001;nstep=40000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 
 %===============================================================
@@ -311,12 +312,12 @@ for is=1:nstep,is;
   CentroidX(is)=CentroidX(is)/Area(is);CentroidY(is)=CentroidY(is)/Area(is);
 
 %------------------ Plot the results ---------------------------
-  time=time+dt                   % plot the results
+  time=time+dt;                  % plot the results
   % 
   % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
   % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-  hold off,contour(x,y,r'),axis equal,axis([Lx/2 Lx*3/4 0 Ly]);
+  hold off,contour(x,y,r'),axis equal,axis([Lx/2 Lx*4/5 0 Ly]);
   hold on;quiver(xh,yh,uu',vv','r');
   plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
     
