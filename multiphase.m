@@ -23,7 +23,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 12; Oh = 0.05;
+Eo = 6; Oh = 0.05;
 
 
 
@@ -44,7 +44,8 @@ az = -100 * (Eo /12);
 t_sc = sqrt(-az/D);
 t_control = 11.19;
 
-t_int = 9.92;
+% t_int = 9.92;
+t_int = 18
 t_dur = (t_int/28);
 tolerance = 0.002;
 
@@ -67,6 +68,9 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 
 nx = 128; ny =192;
+
+nx = nx*1;
+ny = ny*1;
 
 
 %===============================================================
@@ -196,9 +200,12 @@ for is=1:nstep,is;
     fy(2,1:ny+2)=fy(2,1:ny+2)+fy(1,1:ny+2);           % surface force
     fy(nx+1,1:ny+2)=fy(nx+1,1:ny+2)+fy(nx+2,1:ny+2);  % on the grid
     
+% %------------- Set tangential velocity at boundaries -----------	     
+%     u(1:nx+1,1)=2*usouth-u(1:nx+1,2);u(1:nx+1,ny+2)=2*unorth-u(1:nx+1,ny+1);
+%     v(1,1:ny+1)=2*vwest-v(2,1:ny+1);v(nx+2,1:ny+1)=2*veast-v(nx+1,1:ny+1);
 %------------- Set tangential velocity at boundaries -----------	     
-    u(1:nx+1,1)=2*usouth-u(1:nx+1,2);u(1:nx+1,ny+2)=2*unorth-u(1:nx+1,ny+1);
-    v(1,1:ny+1)=2*vwest-v(2,1:ny+1);v(nx+2,1:ny+1)=2*veast-v(nx+1,1:ny+1);
+    u(1:nx+1,1)=u(1:nx+1,2);u(1:nx+1,ny+2)=u(1:nx+1,ny+1);
+    v(1,1:ny+1)=v(2,1:ny+1);v(nx+2,1:ny+1)=v(nx+1,1:ny+1);
 
 %-------------- Find the predicted velocities ------------------	     
     for i=2:nx,for j=2:ny+1      % Temporary u-velocity-advection
@@ -316,17 +323,18 @@ for is=1:nstep,is;
   end
   CentroidX(is)=CentroidX(is)/Area(is);CentroidY(is)=CentroidY(is)/Area(is);
 
-%------------------ Plot the results ---------------------------
-  time=time+dt;                  % plot the results
-  % 
-  % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
-  % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
+% %------------------ Plot the results ---------------------------
+%   time=time+dt;                  % plot the results
+%   % 
+%   % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+%   % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-  % hold off,
-  % contour(x,y,r'),axis equal,axis([Lx/2 Lx*4/5 0 Ly]);
-  % hold on;quiver(xh,yh,uu',vv','r');
-  % plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
-    
+%   % hold off,
+%   % contour(x,y,r'),axis equal,axis([Lx/2 Lx*4/5 0 Ly]);
+%   % hold on;quiver(xh,yh,uu',vv','r');
+%   % plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
+% 
+% 
   t_non = time * t_sc
   if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
       contour(x,y,r'),axis equal,axis([0 Lx/2 0 Ly]);
@@ -337,6 +345,21 @@ for is=1:nstep,is;
   if time * t_sc == t_control
       saveas(gcf, ['velocity_field_contour_' t_control '.png']);  % Save as PNG image
   end
+
+%------------------ Plot the results ---------------------------
+  time=time+dt;                   % plot the results
+  t_non = time * t_sc
+  % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+  % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
+  for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
+  % if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
+  %     hold on,
+  % else
+  %     hold off;
+  % end
+  hold off,contour(x,y,r'),axis equal,axis([0 Lx 0 Ly]);
+  hold on;quiver(xh,yh,uu',vv','r');
+  plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
 
 end                  % End of time step
 

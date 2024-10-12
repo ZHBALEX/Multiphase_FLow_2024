@@ -18,7 +18,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 12; Oh = 0.05;
+Eo = 144; Oh = 0.05;
 
 % Fixed parameters:
 D =2; 
@@ -36,7 +36,7 @@ t_sc = sqrt(-az/D);
 t_control = 11.19;
 
 t_int = 9.8;
-t_dur = (t_int/28);
+t_dur = (t_int/56);
 tolerance = 0.002;
 
 % Transfer:
@@ -50,6 +50,10 @@ gy = az;gx=0.0;
 dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 nx = 128; ny =192;
+
+
+nx = nx * 4;
+ny = ny * 4;
 
 %===============================================================
 %-------------------- Zero various arrays -----------------------
@@ -329,6 +333,20 @@ for is=1:nstep,is;
   Height = max(yf(1:Nf+1)) - min(yf(1:Nf+1));
   AspectRatio(is) =  Height/ Width;
 
+  if is <= 996
+    xmin = min(xf(2:Nf+1));
+    xmax = max(xf(2:Nf+1));
+    ymin = min(yf(2:Nf+1));
+    ymax = max(yf(2:Nf+1));
+    Width = xmax - xmin;
+    Height = ymax - ymin;
+    else
+    xmin = min(xf(2:Nf+1));
+    xmax = max(xf(2:Nf+1));
+    Width = xmax - xmin;
+    Height = ymax - ymin;
+    end
+
 %------------------ Plot the results ---------------------------
   time=time+dt;                  % Update time
   t_non = t_non
@@ -351,17 +369,17 @@ for is=1:nstep,is;
 
       % Second subplot: Center Velocity vs Non-dimensional Time
       subplot(1,3,2);
-      plot(Time(1:is), CenterVelocity(1:is));
+      plot(Time(1:is), CenterVelocity(1:is), 'Color', [0.8, 0.2, 0.2], 'LineWidth', 2, 'LineStyle', '-');
       xlabel('Non-dimensional Time');
       ylabel('Center Velocity');
-      title('Drop Center Velocity vs Non-dimensional Time');
+      title('Center Velocity （Y）');
 
       % Third subplot: Aspect Ratio vs Non-dimensional Time
       subplot(1,3,3);
-      plot(Time(1:is), AspectRatio(1:is));
+      plot(Time(1:is), AspectRatio(1:is), 'Color',[0.2, 0.6, 0.5], 'LineWidth', 2, 'LineStyle', '-');
       xlabel('Non-dimensional Time');
       ylabel('Aspect Ratio');
-      title('Drop Aspect Ratio vs Non-dimensional Time');
+      title('Aspect Ratio');
 
       pause(0.01); % Pause to update the plot
   end

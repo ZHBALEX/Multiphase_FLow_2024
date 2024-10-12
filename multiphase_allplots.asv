@@ -36,7 +36,9 @@ t_sc = sqrt(-az/D);
 t_control = 11.19;
 
 t_int = 9.8;
+t_int = 6
 t_dur = (t_int/28);
+t_dur = (t_int/10)
 tolerance = 0.002;
 
 % Transfer:
@@ -326,9 +328,22 @@ for is=1:nstep,is;
 
   % Compute aspect ratio
   Width = max(xf(1:Nf+1)) - min(xf(1:Nf+1));
-  % Height = max(yf(1:Nf+1)) - min(yf(1:Nf+1));
-  Height = CentroiddY(is);
+  Height = max(yf(1:Nf+1)) - min(yf(1:Nf+1));
   AspectRatio(is) =  Height/ Width;
+
+  if is <= 996
+    xmin = min(xf(2:Nf+1));
+    xmax = max(xf(2:Nf+1));
+    ymin = min(yf(2:Nf+1));
+    ymax = max(yf(2:Nf+1));
+    width = xmax - xmin;
+    height = ymax - ymin;
+    else
+    xmin = min(xf(2:Nf+1));
+    xmax = max(xf(2:Nf+1));
+    width = xmax - xmin;
+    height = ymax - ymin;
+    end
 
 %------------------ Plot the results ---------------------------
   time=time+dt;                  % Update time
@@ -352,14 +367,14 @@ for is=1:nstep,is;
 
       % Second subplot: Center Velocity vs Non-dimensional Time
       subplot(1,3,2);
-      plot(Time(1:is), CenterVelocity(1:is));
+      plot(Time(1:is), CenterVelocity(1:is),'linewidth',1);
       xlabel('Non-dimensional Time');
       ylabel('Center Velocity');
       title('Drop Center Velocity vs Non-dimensional Time');
 
       % Third subplot: Aspect Ratio vs Non-dimensional Time
       subplot(1,3,3);
-      plot(Time(1:is), AspectRatio(1:is));
+      plot(Time(1:is), AspectRatio(1:is), 'Color', [0, 0.5, 0], 'LineWidth', 2, 'LineStyle', '--');
       xlabel('Non-dimensional Time');
       ylabel('Aspect Ratio');
       title('Drop Aspect Ratio vs Non-dimensional Time');
