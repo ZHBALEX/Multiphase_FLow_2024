@@ -23,7 +23,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 6; Oh = 0.05;
+Eo = 72; Oh = 0.05;
 
 
 
@@ -44,10 +44,11 @@ az = -100 * (Eo /12);
 t_sc = sqrt(-az/D);
 t_control = 11.19;
 
-% t_int = 9.92;
-t_int = 18
-t_dur = (t_int/28);
-tolerance = 0.002;
+t_int = 9.92;
+t_int = 3.52
+% t_dur = (t_int/14);
+
+tolerance = 0.005;
 
 % transfer:
 rad=D/2; 
@@ -65,12 +66,12 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 %===============================================================
 
 
+t_dur0 = 40 * dt 
 
+Amp = 2;
+nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
+tolerance = tolerance/Amp;
 
-nx = 128; ny =192;
-
-nx = nx*1;
-ny = ny*1;
 
 
 %===============================================================
@@ -336,19 +337,21 @@ for is=1:nstep,is;
 % 
 % 
   t_non = time * t_sc
-  if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
-      contour(x,y,r'),axis equal,axis([0 Lx/2 0 Ly]);
+  figure(1);
+  % if abs (mod(t_non, t_dur)) <= tolerance || abs(mod(t_non, t_dur) - t_dur) <= tolerance || time == dt
+  if mod(time, t_dur0) < 1e-6 || time == dt
+      contour(x,y,r'),axis equal,axis([0 Lx/2  0 Ly]);
       hold on;quiver(xh,yh,uu',vv','r');
-      plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
+      plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
       title(['Eo = ' num2str(Eo)]);
-  end
-  if time * t_sc == t_control
-      saveas(gcf, ['velocity_field_contour_' t_control '.png']);  % Save as PNG image
+      filename = sprintf('figures_timesave/Eo=%d__t=%.2f.png', Eo, t_dur0*t_sc);
+      saveas(figure(1), filename);  % Save as PNG image
   end
 
 %------------------ Plot the results ---------------------------
   time=time+dt;                   % plot the results
   t_non = time * t_sc
+  figure(2)
   % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
   % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
