@@ -18,7 +18,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 144; Oh = 0.05;
+Eo = 12; Oh = 0.05;
 
 % Fixed parameters:
 D =2; 
@@ -54,7 +54,7 @@ nx = 128; ny =192;
 
 t_dur0 = 40 * dt 
 
-Amp = 2;
+Amp = 4;
 nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
 tolerance = tolerance/Amp;
 
@@ -354,9 +354,9 @@ for is=1:nstep,is;
   time=time+dt;                  % Update time
   t_non = t_non
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-    
-  if abs(mod(t_non, t_dur))<=tolerance || abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
-
+  figure(1);
+  % if abs (mod(t_non, t_dur)) <= tolerance || abs(mod(t_non, t_dur) - t_dur) <= tolerance || time == dt
+  if mod(time, t_dur0) < 1e-6 || time == dt
       % First subplot: Contour plot with velocity field and interface
       subplot(1,3,1);
       contour(x,y,r'); axis equal; axis([0 Lx/2 0 Ly]);
@@ -383,12 +383,16 @@ for is=1:nstep,is;
       xlabel('Non-dimensional Time');
       ylabel('Aspect Ratio');
       title('Aspect Ratio');
+      filename = sprintf('figures_timesave/All_Eo=%d__t=%.2f.png', Eo, t_dur0*t_sc);
+      saveas(figure(1), filename);  % Save as PNG image
 
       pause(0.01); % Pause to update the plot
   end
+  
   if t_non == t_control
       saveas(gcf, ['velocity_field_contour_' num2str(t_control) '.png']);  % Save as PNG image
   end
+
 
 end                  % End of time step
 
