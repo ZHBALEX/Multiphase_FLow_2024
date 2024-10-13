@@ -23,7 +23,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 72; Oh = 0.05;
+Eo = 60; Oh = 0.05;
 
 
 
@@ -340,7 +340,7 @@ for is=1:nstep,is;
   figure(1);
   % if abs (mod(t_non, t_dur)) <= tolerance || abs(mod(t_non, t_dur) - t_dur) <= tolerance || time == dt
   if mod(time, t_dur0) < 1e-6 || time == dt
-      contour(x,y,r'),axis equal,axis([0 Lx/2  0 Ly]);
+      contour(x,y,r'),axis equal,axis([Lx/4 Lx/2  0 Ly]);
       hold on;quiver(xh,yh,uu',vv','r');
       plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
       title(['Eo = ' num2str(Eo)]);

@@ -52,8 +52,11 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 nx = 128; ny =192;
 
 
-nx = nx * 4;
-ny = ny * 4;
+t_dur0 = 40 * dt 
+
+Amp = 2;
+nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
+tolerance = tolerance/Amp;
 
 %===============================================================
 %-------------------- Zero various arrays -----------------------
@@ -351,7 +354,7 @@ for is=1:nstep,is;
   time=time+dt;                  % Update time
   t_non = t_non
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-
+    
   if abs(mod(t_non, t_dur))<=tolerance || abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
 
       % First subplot: Contour plot with velocity field and interface
