@@ -64,12 +64,12 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 %===============================================================
 
-tolerance = 0.5 * dt
+
 t_dur0 = 40 * dt 
 
 Amp = 2;
 nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
-tolerance = tolerance/Amp;
+tolerance = 2 * dt
 
 
 
@@ -343,26 +343,27 @@ for is=1:nstep,is;
       hold on;
       % quiver(xh,yh,uu',vv','r');
       plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
+      title0 = sprintf('Eo=%d__t=%.2f', Eo, time*t_sc);
       title(['Eo = ' num2str(Eo)]);
-      filename = sprintf('figures_timesave/Eo=%d__t=%.2f.png', Eo, t_dur0*t_sc);
+      filename = sprintf('figures_Amp2/Eo=%d__dt=%.2f.png', Eo, t_dur0*t_sc);
       saveas(figure(1), filename);  % Save as PNG image
   end
 
 %------------------ Plot the results ---------------------------
                   % plot the results
   t_non = time * t_sc
-  figure(2)
-  % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
-  % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
-  for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
-  % if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
-  %     hold on,
-  % else
-  %     hold off;
-  % end
-  hold off,contour(x,y,r'),axis equal,axis([0 Lx 0 Ly]);
-  hold on;quiver(xh,yh,uu',vv','r');
-  plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
+  % figure(2)
+  % % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+  % % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
+  % for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
+  % % if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
+  % %     hold on,
+  % % else
+  % %     hold off;
+  % % end
+  % hold off,contour(x,y,r'),axis equal,axis([0 Lx 0 Ly]);
+  % hold on;quiver(xh,yh,uu',vv','r');
+  % plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
 
 end                  % End of time step
 

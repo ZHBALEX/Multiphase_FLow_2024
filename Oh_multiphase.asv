@@ -6,21 +6,28 @@ close all
 % A very simple Navier-Stokes solver for a drop falling in a
 % rectangular box, using a conservative form of the equations. 
 % A 3-order explicit projection method and centered in space 
-% discretization are used. The density is advected by a front 
+% discretizationa are used. The density is advected by a front 
 % tracking scheme and surface tension and variable viscosity is
 % included. This version uses a simple method to create the 
 % marker function. Last edited 7/18/2016
 %===============================================================
 
-% Physical parameters
+
+
+
+% Lx=1.0;Ly=1.0;gx=0.0;gy=-100.0; sigma=100; % Domain size and
+% rho1=1.0; rho2=2.0; m1=0.01; m2=0.02;     % physical variables
 unorth=0; usouth=0; veast=0; vwest=0; time=0.0; 
+% rad=0.15; xc=0.5; yc=0.7;          % Initial drop size and location
 
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 24; Oh = 0.05;
+Eo = 28.8; Oh = 0.125;
 
-% Fixed parameters:
+
+
+% fixed parameters:
 D =2; 
 
 Lx = 10*D ; Ly = 15 *D;
@@ -29,27 +36,33 @@ xc = Lx/2 ; yc = 0.9 * Ly;
 sigma = 300;
 rhoo = 1 ; rhod = 10;
 
+
+
 mud = sqrt(6000)* Oh; muo = sqrt(600)* Oh;
 az = -100 * (Eo /12);
 
 t_sc = sqrt(-az/D);
 t_control = 11.19;
 
-t_int = 9.8;
-t_dur = (t_int/56);
-tolerance = 0.002;
+t_int = 9.92;
+t_int = 3.52
+% t_dur = (t_int/14);
 
-% Transfer:
+tolerance = 0.005;
+
+% transfer:
 rad=D/2; 
 rho1 = rhoo ; rho2 = rhod;
 m1 = muo; m2 = mud;
 gy = az;gx=0.0;
 
+
 %===============================================================
 %-------------------- Numerical variables ----------------------
+% nx=32;ny=32;
 dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
-nx = 128; ny =192;
+%===============================================================
 
 
 t_dur0 = 40 * dt 
@@ -58,8 +71,11 @@ Amp = 2;
 nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
 tolerance = 2 * dt
 
+
+
 %===============================================================
-%-------------------- Zero various arrays -----------------------
+
+%-------------------- Zero various arrys -----------------------
 u=zeros(nx+1,ny+2);  v=zeros(nx+2,ny+1);  p=zeros(nx+2,ny+2);
 ut=zeros(nx+1,ny+2); vt=zeros(nx+2,ny+1); tmp1=zeros(nx+2,ny+2); 
 uu=zeros(nx+1,ny+1); vv=zeros(nx+1,ny+1); tmp2=zeros(nx+2,ny+2);
@@ -84,20 +100,10 @@ end,end
 
 for l=1:Nf+2, xf(l)=xc-rad*sin(2.0*pi*(l-1)/(Nf));      % Initialize 
               yf(l)=yc+rad*cos(2.0*pi*(l-1)/(Nf));end   % the Front
-
-% Initialize arrays for statistics
-Area = zeros(1, nstep);
-CentroidX = zeros(1, nstep);
-CentroidY = zeros(1, nstep);
-Time = zeros(1, nstep);          % Will store non-dimensional time t_non
-CenterVelocityX = zeros(1, nstep);
-CenterVelocityY = zeros(1, nstep);
-CenterVelocity = zeros(1, nstep);
-AspectRatio = zeros(1, nstep);
-
-% Set up the figure with three subplots horizontally
-figure('Position', [100, 100, 1200, 400]);  % Width 1200, Height 400
-
+% 
+% hold off,contour(x,y,chi'),axis equal,axis([0 Lx 0 Ly]);
+% hold on;plot(xf(1:Nf),yf(1:Nf),'k','linewidth',3);pause(0.01)               
+figure('Position', [100, 100, 400, 800]);  % 宽度800，高度400
 %---------------------- START TIME LOOP ------------------------
 for is=1:nstep,is;
   un=u; vn=v; rn=r; mn=m; xfn=xf; yfn=yf;  % Higher order
@@ -194,9 +200,12 @@ for is=1:nstep,is;
     fy(2,1:ny+2)=fy(2,1:ny+2)+fy(1,1:ny+2);           % surface force
     fy(nx+1,1:ny+2)=fy(nx+1,1:ny+2)+fy(nx+2,1:ny+2);  % on the grid
     
+% %------------- Set tangential velocity at boundaries -----------	     
+%     u(1:nx+1,1)=2*usouth-u(1:nx+1,2);u(1:nx+1,ny+2)=2*unorth-u(1:nx+1,ny+1);
+%     v(1,1:ny+1)=2*vwest-v(2,1:ny+1);v(nx+2,1:ny+1)=2*veast-v(nx+1,1:ny+1);
 %------------- Set tangential velocity at boundaries -----------	     
-    u(1:nx+1,1)=2*usouth-u(1:nx+1,2);u(1:nx+1,ny+2)=2*unorth-u(1:nx+1,ny+1);
-    v(1,1:ny+1)=2*vwest-v(2,1:ny+1);v(nx+2,1:ny+1)=2*veast-v(nx+1,1:ny+1);
+    u(1:nx+1,1)=u(1:nx+1,2);u(1:nx+1,ny+2)=u(1:nx+1,ny+1);
+    v(1,1:ny+1)=v(2,1:ny+1);v(nx+2,1:ny+1)=v(nx+1,1:ny+1);
 
 %-------------- Find the predicted velocities ------------------	     
     for i=2:nx,for j=2:ny+1      % Temporary u-velocity-advection
@@ -212,11 +221,11 @@ for is=1:nstep,is;
     for i=2:nx+1,for j=2:ny       % Temporary v-velocity-advection    
       vt(i,j)=(2.0/(r(i,j+1)+r(i,j)))*(0.5*(ro(i,j+1)+ro(i,j))*v(i,j)+ dt*( ...     
       -(0.0625/dx)*( (ro(i,j)+ro(i+1,j)+ro(i+1,j+1)+ro(i,j+1))*             ...
-                                                (u(i,j)+u(i,j+1))*(v(i,j)+v(i+1,j)) ...
-                    - (ro(i,j)+ro(i,j+1)+ro(i-1,j+1)+ro(i-1,j))*              ...
-                                      (u(i-1,j+1)+u(i-1,j))*(v(i,j)+v(i-1,j)))...                                 
+                                        (u(i,j)+u(i,j+1))*(v(i,j)+v(i+1,j)) ...
+                  - (ro(i,j)+ro(i,j+1)+ro(i-1,j+1)+ro(i-1,j))*              ...
+                                    (u(i-1,j+1)+u(i-1,j))*(v(i,j)+v(i-1,j)))...                                 
       -(0.25/dy)*(ro(i,j+1)*(v(i,j+1)+v(i,j))^2-ro(i,j)*(v(i,j)+v(i,j-1))^2)...
-                                    + 0.5*(ro(i,j+1)+ro(i,j))*gy + fy(i,j) ) );    
+                                  + 0.5*(ro(i,j+1)+ro(i,j))*gy + fy(i,j) ) );    
     end,end
         
     for i=2:nx,for j=2:ny+1      % Temporary u-velocity-viscosity
@@ -248,7 +257,7 @@ for is=1:nstep,is;
       tmp1(i,j)= (0.5/dt)*( (ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy );
       tmp2(i,j)=1.0/( (1./dx)*(1./(dx*(rt(i+1,j)+rt(i,j)))+   ...
                                1./(dx*(rt(i-1,j)+rt(i,j))) )+ ...
-                          (1./dy)*(1./(dy*(rt(i,j+1)+rt(i,j)))+   ...
+                      (1./dy)*(1./(dy*(rt(i,j+1)+rt(i,j)))+   ...
                                1./(dy*(rt(i,j-1)+rt(i,j))) )   );
     end,end
 
@@ -286,7 +295,7 @@ for is=1:nstep,is;
     
   end               % End of sub-iteration for RK-3 time integration
 
-%--------------- Add and delete points in the Front -----------
+%--------------- Add and deleate points in the Front -----------
   xfold=xf;yfold=yf; l1=1;
   for l=2:Nf+1
     ds=sqrt( ((xfold(l)-xf(l1))/dx)^2 + ((yfold(l)-yf(l1))/dy)^2);
@@ -302,97 +311,59 @@ for is=1:nstep,is;
   Nf=l1-1;
   xf(1)=xf(Nf+1);yf(1)=yf(Nf+1);xf(Nf+2)=xf(2);yf(Nf+2)=yf(2);
   
-%----------------- Compute Diagnostic quantities --------------
-  t_non = time * t_sc;          % Compute non-dimensional time
-  Time(is) = t_non;             % Store non-dimensional time
-  
-  Area(is)=0; CentroidX(is)=0; CentroidY(is)=0; 
+%----------------- Compute Diagnostic quantitites --------------
+  Area(is)=0; CentroidX(is)=0; CentroidY(is)=0; Time(is)=time;
 
-  % Compute Area and Centroid
-  for l=2:Nf+1
-      Area(is)=Area(is)+...
+  for l=2:Nf+1, Area(is)=Area(is)+...
       0.25*((xf(l+1)+xf(l))*(yf(l+1)-yf(l))-(yf(l+1)+yf(l))*(xf(l+1)-xf(l)));  
     CentroidX(is)=CentroidX(is)+...
       0.125*((xf(l+1)+xf(l))^2+(yf(l+1)+yf(l))^2)*(yf(l+1)-yf(l));
     CentroidY(is)=CentroidY(is)-...
       0.125*((xf(l+1)+xf(l))^2+(yf(l+1)+yf(l))^2)*(xf(l+1)-xf(l));
   end
-  CentroidX(is)=CentroidX(is)/Area(is);
-  CentroidY(is)=CentroidY(is)/Area(is);
-
-  % Compute center velocity
-  if is > 1
-      dt_non = dt *t_sc;
-      CenterVelocityX(is) = (CentroidX(is) - CentroidX(is-1))/dt_non;
-      CenterVelocityY(is) = (CentroidY(is) - CentroidY(is-1))/dt_non;
-  else
-      CenterVelocityX(is) = 0;
-      CenterVelocityY(is) = 0;
-  end
-  CenterVelocity(is) = sqrt(CenterVelocityX(is)^2 + CenterVelocityY(is)^2);
-
-  % Compute aspect ratio
-  Width = max(xf(1:Nf+1)) - min(xf(1:Nf+1));
-  Height = max(yf(1:Nf+1)) - min(yf(1:Nf+1));
-  AspectRatio(is) =  Height/ Width;
-
-  if is <= 996
-    xmin = min(xf(2:Nf+1));
-    xmax = max(xf(2:Nf+1));
-    ymin = min(yf(2:Nf+1));
-    ymax = max(yf(2:Nf+1));
-    Width = xmax - xmin;
-    Height = ymax - ymin;
-    else
-    xmin = min(xf(2:Nf+1));
-    xmax = max(xf(2:Nf+1));
-    Width = xmax - xmin;
-    Height = ymax - ymin;
-    end
-
-%------------------ Plot the results ---------------------------
-  time=time+dt;                  % Update time
-  t_non = t_non
+  CentroidX(is)=CentroidX(is)/Area(is);CentroidY(is)=CentroidY(is)/Area(is);
+   time=time+dt;   
+% %------------------ Plot the results ---------------------------
+%   time=time+dt;                  % plot the results
+%   % 
+%   % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+%   % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
   for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
+%   % hold off,
+%   % contour(x,y,r'),axis equal,axis([Lx/2 Lx*4/5 0 Ly]);
+%   % hold on;quiver(xh,yh,uu',vv','r');
+%   % plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
+% 
+% 
+  t_non = time * t_sc
   figure(1);
   % if abs (mod(t_non, t_dur)) <= tolerance || abs(mod(t_non, t_dur) - t_dur) <= tolerance || time == dt
   if mod(time, t_dur0) < tolerance || time == dt
-      % First subplot: Contour plot with velocity field and interface
-      subplot(1,3,1);
-      contour(x,y,r'); axis equal; axis([0 Lx/2 0 Ly]);
+      contour(x,y,r'),axis equal,axis([Lx/5 Lx/2  0 Ly]);
       hold on;
-      % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
-      % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
       % quiver(xh,yh,uu',vv','r');
-      plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);
-      % hold off;
-      title(['Eo = ' num2str(Eo)]);
-      xlabel('X');
-      ylabel('Y');
-
-      % Second subplot: Center Velocity vs Non-dimensional Time
-      subplot(1,3,2);
-      plot(Time(1:is), CenterVelocity(1:is), 'Color', [0.8, 0.2, 0.2], 'LineWidth', 2, 'LineStyle', '-');
-      xlabel('Non-dimensional Time');
-      ylabel('Center Velocity');
-      title('Center Velocity （Y）');
-
-      % Third subplot: Aspect Ratio vs Non-dimensional Time
-      subplot(1,3,3);
-      plot(Time(1:is), AspectRatio(1:is), 'Color',[0.2, 0.6, 0.5], 'LineWidth', 2, 'LineStyle', '-');
-      xlabel('Non-dimensional Time');
-      ylabel('Aspect Ratio');
-      title('Aspect Ratio');
-      filename = sprintf('figures_Amp2/All_Eo=%d__t=%.2f.png', Eo, t_dur0*t_sc);
+      plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
+      title0 = sprintf('Oh=%d__t=%.2f', Oh, time*t_sc);
+      title(['Oh = ' num2str(Oh)]);
+      filename = sprintf('figures_Amp2/Oh=%.2f__dt=%.2f.png', Oh, t_dur0*t_sc);
       saveas(figure(1), filename);  % Save as PNG image
-
-      pause(0.01); % Pause to update the plot
-  end
-  
-  if t_non == t_control
-      saveas(gcf, ['velocity_field_contour_' num2str(t_control) '.png']);  % Save as PNG image
   end
 
+%------------------ Plot the results ---------------------------
+                  % plot the results
+  t_non = time * t_sc
+  % figure(2)
+  % % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
+  % % vv(1:nx+1,1:ny+1)=0.5*(v(2:nx+2,1:ny+1)+v(1:nx+1,1:ny+1));
+  % for i=1:nx+1,xh(i)=dx*(i-1);end;     for j=1:ny+1,yh(j)=dy*(j-1);end
+  % % if abs(mod(t_non, t_dur))<=tolerance ||abs(mod(t_non, t_dur)-t_dur)<= tolerance || time == dt
+  % %     hold on,
+  % % else
+  % %     hold off;
+  % % end
+  % hold off,contour(x,y,r'),axis equal,axis([0 Lx 0 Ly]);
+  % hold on;quiver(xh,yh,uu',vv','r');
+  % plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01)
 
 end                  % End of time step
 
