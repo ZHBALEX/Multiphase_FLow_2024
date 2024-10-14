@@ -23,7 +23,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 60; Oh = 0.05;
+Eo = 12; Oh = 0.05;
 
 
 
@@ -62,10 +62,9 @@ gy = az;gx=0.0;
 % nx=32;ny=32;
 dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
-
 %===============================================================
 
-
+tolerance = 0.5 * dt
 t_dur0 = 40 * dt 
 
 Amp = 2;
@@ -323,7 +322,7 @@ for is=1:nstep,is;
       0.125*((xf(l+1)+xf(l))^2+(yf(l+1)+yf(l))^2)*(xf(l+1)-xf(l));
   end
   CentroidX(is)=CentroidX(is)/Area(is);CentroidY(is)=CentroidY(is)/Area(is);
-
+   time=time+dt;   
 % %------------------ Plot the results ---------------------------
 %   time=time+dt;                  % plot the results
 %   % 
@@ -339,9 +338,10 @@ for is=1:nstep,is;
   t_non = time * t_sc
   figure(1);
   % if abs (mod(t_non, t_dur)) <= tolerance || abs(mod(t_non, t_dur) - t_dur) <= tolerance || time == dt
-  if mod(time, t_dur0) < 1e-6 || time == dt
-      contour(x,y,r'),axis equal,axis([Lx/4 Lx/2  0 Ly]);
-      hold on;quiver(xh,yh,uu',vv','r');
+  if mod(time, t_dur0) < tolerance || time == dt
+      contour(x,y,r'),axis equal,axis([Lx/5 Lx/2  0 Ly]);
+      hold on;
+      % quiver(xh,yh,uu',vv','r');
       plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
       title(['Eo = ' num2str(Eo)]);
       filename = sprintf('figures_timesave/Eo=%d__t=%.2f.png', Eo, t_dur0*t_sc);
@@ -349,7 +349,7 @@ for is=1:nstep,is;
   end
 
 %------------------ Plot the results ---------------------------
-  time=time+dt;                   % plot the results
+                  % plot the results
   t_non = time * t_sc
   figure(2)
   % uu(1:nx+1,1:ny+1)=0.5*(u(1:nx+1,2:ny+2)+u(1:nx+1,1:ny+1));
