@@ -67,7 +67,7 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 t_dur0 = 40 * dt 
 
-Amp = 2;
+Amp = 4;
 nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
 tolerance = 2 * dt
 
@@ -345,7 +345,7 @@ for is=1:nstep,is;
       plot(xf(1:Nf),yf(1:Nf),'k','linewidth',1);pause(0.01);
       title0 = sprintf('Eo=%d__t=%.2f', Eo, time*t_sc);
       title(['Eo = ' num2str(Eo)]);
-      filename = sprintf('figures_Amp2/Eo=%d__dt=%.2f.png', Eo, t_dur0*t_sc);
+      filename = sprintf('figures_Amp4/Eo=%d__dt=%.2f.png', Eo, t_dur0*t_sc);
       saveas(figure(1), filename);  % Save as PNG image
   end
 
