@@ -18,7 +18,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 28.8; Oh = 0.25;
+Eo = 28.8; Oh = 0.025;
 
 % Fixed parameters:
 D =2; 
@@ -383,7 +383,7 @@ for is=1:nstep,is;
       xlabel('Non-dimensional Time');
       ylabel('Aspect Ratio');
       title('Aspect Ratio');
-      filename = sprintf('figures_Amp2/All_Oh=%.2f__t=%.2f.png', Oh, t_dur0*t_sc);
+      filename = sprintf('figures_Amp2/All_Oh=%.32f__t=%.2f.png', Oh, t_dur0*t_sc);
       saveas(figure(1), filename);  % Save as PNG image
 
       pause(0.01); % Pause to update the plot

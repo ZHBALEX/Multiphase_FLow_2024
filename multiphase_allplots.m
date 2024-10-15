@@ -18,7 +18,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 24; Oh = 0.05;
+Eo = 72; Oh = 0.05;
 
 % Fixed parameters:
 D =2; 

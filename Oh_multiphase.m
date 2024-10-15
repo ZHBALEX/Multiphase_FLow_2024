@@ -23,7 +23,7 @@ unorth=0; usouth=0; veast=0; vwest=0; time=0.0;
 %===============================================================
 % 1: o (liquid )     2:d (drop)
 
-Eo = 28.8; Oh = 0.125;
+Eo = 28.8; Oh = 0.25;
 
 
 
@@ -67,7 +67,7 @@ dt=0.001;nstep=4000000; maxit=200;maxError=0.01;beta=1.5; Nf=100;
 
 t_dur0 = 40 * dt 
 
-Amp = 2;
+Amp = 4;
 nx = 128; ny =192; nx = nx*Amp; ny = ny*Amp; dt = dt /Amp;
 tolerance = 2 * dt
 
