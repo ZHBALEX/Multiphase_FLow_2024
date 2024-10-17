@@ -260,7 +260,7 @@ Fuster \& Popinet, 2018      & All-Mach method for bubble dynamics and surface t
 
 \subsubsection{Parameters Define The Problem}
 To construct the problem, we are using a finite domain to simulate the drop breakup, where the symbols and their description showing as follows:
-\begin{table}[ht]
+\begin{table}[H]
 \scriptsize
 \centering
 \caption{Explanation of symbols and their corresponding values used in non-dimensional numbers}
@@ -326,7 +326,7 @@ $\mu^* = \frac{\mu_d}{\mu_o}$ & Viscosity ratio & Ratio of the viscosity of the 
 \subsection{Control Non-Dimensional numbers using $a_z$ and $\mu_D$}
 
 
-As the major non-dimensional numbers are Ohnesorge number and Eotvos number, we use our basic parameters to control them:
+As the major non-dimensional numbers are Ohnesorge number and Eotvos number, we want to obtain more information of the effect from each of them. As they are independent, we can use choose our basic parameters to control them independently:
 
 
 
@@ -362,57 +362,59 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 
 
 
-% \section{Simulation Setup}
-% \subsection{Domain and Boundary Condition}
-% The Domain is set up as follows:
+\subsection{Simulation Setup}
+\subsubsection{Domain, Boundary Condition, and Grid Independence}
+The Domain is set up as follows:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Latex/figures/Domain_and_Grid_indep.jpg}
+    % \caption{Drop deformation as a function of the Reynolds number.}
+    \label{deformation}
+\end{figure}
+
+
+
+\begin{table}[ht]
+\scriptsize
+\centering
+% \caption{Explanation of symbols and their corresponding values used in non-dimensional numbers}
+\renewcommand{\arraystretch}{1.5} % Adjust row height
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
+\hline
+$L_x$ & $L_y$ & $L_c$ & $D$   & Top & Bottom & Left & Right \\
+\hline
+$10D$ & $30D$ & $0.9L_y$ & $D$   & Neumann & Neumann & Neumann & Neumann \\
+\hline
+\end{tabular}
+\end{table}
+
+
 % \begin{figure}[H]
 %     \centering
-%     \includegraphics[width=0.6\textwidth]{Latex/figures/Domain.jpg}
+%     \begin{overpic}[width=0.6\textwidth]{Latex/figures/Domain.jpg}
+%         \put(40,40){% 调整这些坐标以定位表格
+%             \begin{minipage}{0.45\textwidth}
+%                 \scriptsize
+%                 \renewcommand{\arraystretch}{1.5} % 调整行高
+%                 \begin{tabular}{|c|c|c|c|c|c|c|c|}
+%                     \hline
+%                     \multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
+%                     \hline
+%                     $L_x$ & $L_y$ & $L_c$ & $D$ & Top & Bottom & Left & Right \\
+%                     \hline
+%                     $10D$ & $30D$ & $0.9L_y$ & $D$ & Symm & Symm & Symm & Symm \\
+%                     \hline
+%                 \end{tabular}
+%             \end{minipage}
+%         }
+%     \end{overpic}
 %     % \caption{Drop deformation as a function of the Reynolds number.}
 %     \label{deformation}
 % \end{figure}
 
 
-
-% \begin{table}[ht]
-% \scriptsize
-% \centering
-% % \caption{Explanation of symbols and their corresponding values used in non-dimensional numbers}
-% \renewcommand{\arraystretch}{1.5} % Adjust row height
-% \begin{tabular}{|c|c|c|c|c|c|c|c|}
-% \hline
-% \multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
-% \hline
-% $L_x$ & $L_y$ & $L_c$ & $D$   & Top & Bottom & Left & Right \\
-% \hline
-% $10D$ & $30D$ & $0.9L_y$ & $D$   & Symm & Symm & Symm & Symm \\
-% \hline
-% \end{tabular}
-% \end{table}
-
-
-\begin{figure}[H]
-    \centering
-    \begin{overpic}[width=0.6\textwidth]{Latex/figures/Domain.jpg}
-        \put(40,40){% 调整这些坐标以定位表格
-            \begin{minipage}{0.45\textwidth}
-                \scriptsize
-                \renewcommand{\arraystretch}{1.5} % 调整行高
-                \begin{tabular}{|c|c|c|c|c|c|c|c|}
-                    \hline
-                    \multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
-                    \hline
-                    $L_x$ & $L_y$ & $L_c$ & $D$ & Top & Bottom & Left & Right \\
-                    \hline
-                    $10D$ & $30D$ & $0.9L_y$ & $D$ & Symm & Symm & Symm & Symm \\
-                    \hline
-                \end{tabular}
-            \end{minipage}
-        }
-    \end{overpic}
-    % \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
-\end{figure}
 
 
 
@@ -433,16 +435,19 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 
 
 
-\subsubsection{Grid Independence Study}
+% \subsubsection{Grid Independence Study}
 
-\subsubsection{Key Parameters Along time}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Latex/figures/Trygg_allEo.jpg}
-    \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.3\textwidth]{Latex/figures/Grid_ind.jpg}
+%     \caption{Drop deformation as a function of the Reynolds number.}
+%     \label{deformation}
+% \end{figure}
+
+% \subsubsection{Key Parameters Along time}
+
+
 
 
 % \begin{tabular}{|>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm}|}
@@ -454,7 +459,8 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 % \end{tabular}
 
 
-\subsubsection{}
+\subsection{Breakup Map}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{Latex/figures/Eo_effect.jpg}
@@ -462,24 +468,75 @@ By seperatly change these key parameters, we could seperatly change the non-dime
     \label{deformation}
 \end{figure}
 
+In the breakup map we obtained for 2D drop (or infinite cylinder drop in 3D), we could obtain the following observation:
+\begin{itemize}
+    \item Breakup forward (in the direction of drop moving) for Eo=12, Eo=24.
+    \item Breakup backward for Eo larger than 24, which called "disk-like" shape
+\end{itemize}
+
+In this case, Eo is controlled as the independent variable, representing the ratio of gravitational force to surface tension. The following observations can be made:\\
+
+When Eo is low (e.g., Eo = 12), gravitational forces play a dominant role in the motion of the falling drop. At this Eo value, surface tension is relatively strong but still insufficient to fully maintain the drop’s shape, resulting in a slow breakup. The highest pressure occurs at the front-center of the drop, pushing the fluid mass from the center toward the edges. The gravitational force, acting as a volume force, causes the edges to accelerate as the drop descends. Consequently, the center of the drop becomes thinner and moves upwards, creating what is known as a "backward-facing bag" structure.\\
+
+At high Eo values, surface tension is too weak to preserve the drop’s shape during the early stages of its motion. Initially, the drop exhibits deformation patterns similar to those observed at lower Eo values, with the front-center experiencing strong pressure that pushes the fluid mass outward toward the edges, thinning the center. However, at higher Eo values, the stronger gravitational force gives the drop a larger initial acceleration, causing the center to move faster than the edges. As the deformation progresses, the edges are pushed backwards. Simultaneously, the center retracts, forming a "narrow point" at the interface between the edge and center. This thinning eventually causes the drop to break apart, generating smaller droplets, which may lead to premature termination of the numerical simulation.
 
 
-Compare to Dr. Han and Dr. Tryggvason's research result in 3D (Axis-symmetric), we found for 2D drop (could be modeled as infinite cylinder), the evolution and break up actually occurred in the smaller Eo number, however, the break up scheme is much similar.
+% Because in this case, Oh=0.5, which means viscous force is only half of the surface tension, which means it could 
 
 
 
 
-In general, the drop will first been squeezed and from circle to elliptic shape, then, the effect of Eo number become more easier to be observed. At low Eo, the drop's center stick will decrease and become almost a line first, however, at high Eo, the drop's connection edge will become almost a line first. 
 
-At coarse grid, this will lead to simulation failure more easily. 
+
+
+
 
 
 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Latex/figures/All_Eo=12__t=0.28.png}
+    \includegraphics[width=0.8\textwidth]{Latex/figures/Trygg_allEo.jpg}
     \caption{Drop deformation as a function of the Reynolds number.}
+    \label{deformation}
+\end{figure}
+
+
+
+
+
+Compare to Dr. Han and Dr. Tryggvason's research result in 3D (Axis-symmetric), we found for our 2D drop simulation(could be modeled as infinite cylinder), the evolution and break up actually occurred in the smaller Eo number, which could be explained by the difference of 2D and 3D scheme, however, the break up scheme is much similar.
+
+
+
+
+
+
+
+
+
+In general, the drop will first been squeezed and from circle to elliptic shape, then, the effect of Eo number become more easier to be observed. 
+
+
+% At low Eo, the drop's center will be pushed back by the front pressure, and it will become thinner, which make the drop's mass move to the edge, the breakup map shows as a "backward bag" form. s
+
+
+
+% At coarse grid, this will lead to simulation failure more easily. 
+
+
+
+\subsection{Center Velocity And Aspect Ration}
+
+
+
+Here we plot the center velocity and aspect ration vesus time, there are two condition were examined:  (1) Eo=12, Oh=0.05, (2) Eo=28.8, Oh=0.125, and for both cases, we keep $\rho_d/\rho_o$ = 10, the result is showing below:
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Latex/figures/All_Eo=12__t=0.28.png}
+    \caption{Eo=12, Oh=0.05}
     \label{deformation}
 \end{figure}
 
@@ -488,18 +545,37 @@ At coarse grid, this will lead to simulation failure more easily.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Latex/figures/All_Oh=1.25_t=0.44.png}
-    \caption{Drop deformation as a function of the Reynolds number.}
+    \caption{28.8, Oh=0.125}
     \label{deformation}
 \end{figure}
 
 
+
+Centroid velocity versus $t^*$ for the drops. The results are presented for different Eo, keep $\rho_d/\rho_o$ = 10, $Oh_o=Oh_d$= 0.05:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{Latex/figures/velocity_profile_compare.jpg}
-    \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Latex/figures/velocity_profile_compare.jpg}
+        \caption{Our drop's centroid velocity versus $t^*$ for the drops, Eo =12, 24, 72}
+        \label{fig:deformation1}
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    % \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Latex/figures/Trygg_allEo_velo.jpeg}
+        \caption{Dr. Tryggvason's result, Eo =12, 24, 28.8, 36, 48, 60, 72, 96, and 144}
+        \label{fig:deformation2}
+    \end{minipage}
 \end{figure}
+
+
+Could see, our result shows very similar to Dr. Tryggvason's result, where as Eo increase, the drop move slower, and at the lowest Eo drop (Eo=12), the drop actually reached steady-state velocity, where the other drops (higher Eo)'s velocity decrease when the deformation start to occur. \\
+
+The only thing different with the reference is th velocity magnitiude, which is because Dr. Tryggvason actually simulate the axis-symmetic (3D) drop, where we just simulated 2D drop. 
+
 
 
 
