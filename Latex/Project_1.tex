@@ -106,21 +106,22 @@
 \textbf{Ref}                 & \textbf{Key Approach}                                                 & \textbf{Result/Contribution}                                                            \\ \hline
 Stokes, 1851\cite{stokes1851pendulums}                  & Analytic solution for viscous drag on small spheres                    & Established Stokes' law, applicable to small falling droplets                           \\ \hline
 Worthington, 1876  \cite{worthington1876study}          & First experimental capture of falling drop dynamics                    & Laid the experimental foundation for drop dynamics studies                              \\ \hline
-Rayleigh, 1878               & Stability of liquid jets                                               & Foundation for instability phenomena in fluid dynamics                                  \\ \hline
-Taylor, 1934                 & Study of emulsion formation in flow fields                             & Key insights into the relationship between surface tension and flow                     \\ \hline
-Proudman \& Pearson, 1957    & Expansion at small Reynolds number                                     & Showed shape deformation and velocity relationship for falling droplets                 \\ \hline
-Hirt \& Nichols, 1981        & Volume of Fluid (VOF) method for free boundary dynamics                & Developed a widely-used numerical method for multiphase flow simulations                \\ \hline
-Brackbill et al., 1992       & Surface tension models in numerical methods                            & Introduced surface tension models into methods like VOF                                 \\ \hline
-Peregrine et al., 1997       & Investigation of drop impact on liquid surfaces                        & Studied splashing phenomena during droplet impacts                                      \\ \hline
-Eggers, 1997                 & Nonlinear dynamics and breakup of free-surface flows                   & Described the nonlinearity and singularities in droplet splitting                       \\ \hline
-Han \& Tryggvason, 1999      & Axisymmetric drop breakup using CFD                                    & Studied drop breakup with parameters like Eo, Oh, Re, and We                            \\ \hline
-Brenner et al., 1999         & Study of viscous liquid breakup                                        & Provided detailed analysis of droplet breakup mechanisms                                \\ \hline
-Thoroddsen et al., 2008      & High-speed photography of droplet impacts                             & Captured droplet collision and fragmentation at extreme velocities                      \\ \hline
-Popinet, 2009                & Accurate adaptive solver for interfacial flows                        & Developed Gerris, an open-source tool for high-precision simulation of droplet dynamics \\ \hline
-Prosperetti, 2015            & Numerical simulations of fluid-fluid interactions with high accuracy   & Improved accuracy in the simulation of fluid-fluid interaction phenomena                \\ \hline
-Fuster \& Popinet, 2018      & All-Mach method for bubble dynamics and surface tension simulations    & Provided simulations of complex two-phase flows with high performance computing         \\ \hline
+Rayleigh, 1878\cite{rayleigh1878stability}              & Stability of liquid jets                                               & Foundation for instability phenomena in fluid dynamics                                  \\ \hline
+Taylor, 1934\cite{taylor1934emulsions}                 & Study of emulsion formation in flow fields                             & Key insights into the relationship between surface tension and flow                     \\ \hline
+Proudman \& Pearson, 1957\cite{proudman1957expansion}    & Expansion at small Reynolds number                                     & Showed shape deformation and velocity relationship for falling droplets                 \\ \hline
+Hirt \& Nichols, 1981\cite{hirt1981vof}        & Volume of Fluid (VOF) method for free boundary dynamics                & Developed a widely-used numerical method for multiphase flow simulations                \\ \hline
+Brackbill et al., 1992\cite{brackbill1992surface}       & Surface tension models in numerical methods                            & Introduced surface tension models into methods like VOF                                 \\ \hline
+Peregrine et al., 1997\cite{peregrine1997impact}       & Investigation of drop impact on liquid surfaces                        & Studied splashing phenomena during droplet impacts                                      \\ \hline
+Eggers, 1997\cite{eggers1997nonlinear}                 & Nonlinear dynamics and breakup of free-surface flows                   & Described the nonlinearity and singularities in droplet splitting                       \\ \hline
+Han \& Tryggvason, 1999\cite{han1999axisymmetric}      & Axisymmetric drop breakup using CFD                                    & Studied drop breakup with parameters like Eo, Oh, Re, and We                            \\ \hline
+Brenner et al., 1999\cite{brenner1999breakup}         & Study of viscous liquid breakup                                        & Provided detailed analysis of droplet breakup mechanisms                                \\ \hline
+Thoroddsen et al., 2008\cite{thoroddsen2008highspeed}      & High-speed photography of droplet impacts                             & Captured droplet collision and fragmentation at extreme velocities                      \\ \hline
+Popinet, 2009\cite{popinet2009gerris}                & Accurate adaptive solver for interfacial flows                        & Developed Gerris, an open-source tool for high-precision simulation of droplet dynamics \\ \hline
+Prosperetti, 2015\cite{prosperetti2015fluidfluid}            & Numerical simulations of fluid-fluid interactions with high accuracy   & Improved accuracy in the simulation of fluid-fluid interaction phenomena                \\ \hline
+Fuster \& Popinet, 2018\cite{fuster2018allmach}      & All-Mach method for bubble dynamics and surface tension simulations    & Provided simulations of complex two-phase flows with high performance computing         \\ \hline
 \end{tabularx}
 \end{table}
+
 
 
 % \subsection{Overview of the Falling Drop Dynamics}
@@ -364,13 +365,9 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 
 \subsection{Simulation Setup}
 \subsubsection{Domain, Boundary Condition, and Grid Independence}
-The Domain is set up as follows:
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Latex/figures/Domain_and_Grid_indep.jpg}
-    % \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
-\end{figure}
+
+
+The Domain is set up as follows: we define the domain length, height, and the drop initial height from the bottom boundary. 
 
 
 
@@ -385,10 +382,24 @@ The Domain is set up as follows:
 \hline
 $L_x$ & $L_y$ & $L_c$ & $D$   & Top & Bottom & Left & Right \\
 \hline
-$10D$ & $30D$ & $0.9L_y$ & $D$   & Neumann & Neumann & Neumann & Neumann \\
+$10D$ & $30D$ & $0.9L_y$ & $D$   & $v_{i} = v_{i-1}$ & $v_i = v_{i+1}$ & $u_i = u_{i-1}$ & $u_i = u_{i+1}$ \\
 \hline
 \end{tabular}
 \end{table}
+
+
+Should be noticed, we set up the boundary condition as Neumann Boundary condition ($u_i = u_{i+1}$, where u and i are in x or y direction simuntiuously, and i and i+1 is one in the domain and one outside), as we ty to set up to similate the "infinite" boundary result, although in our test, the drop still won't pass the boundary when it touch the bottom. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Latex/figures/Domain_grid_indep.jpg}
+    % \caption{Drop deformation as a function of the Reynolds number.}
+    \label{deformation}
+\end{figure}
+
+
+In this part, we also performed the grid independence study, to confirm the best resolution which could balance the accuracy and the cost, which include the time and computational resouce. The finest grid resolution we could finish in time is the one is 512x768, which actually cost 2 days in the computer to finish. After compare with 256x384, we find the 256x384 preform well, which means we could almost ignore the difference, and it could simulate and get result at high Eo.
+
+
 
 
 % \begin{figure}[H]
@@ -540,18 +551,18 @@ Here we plot the center velocity and aspect ration vesus time, there are two con
     \label{deformation}
 \end{figure}
 
+The falling drop's shape was not change a lot at the initial dropping (t* = (0,4)s), at the working done by gravity, its velocity increase. As its been pushed by pressure in front and "stretch" at the edge, the drag force's effect shows up and slow down (t*= (4,8)s). At the final stage, the mass of the drop been keep pushed and move to the drop edge, which shows falling bag shape.
 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{Latex/figures/All_Oh=1.25_t=0.44.png}
-    \caption{28.8, Oh=0.125}
-    \label{deformation}
-\end{figure}
+Should be noticed, at the end of our simlation shows in the figure, the center velocity and aspect ration shows abnormal behaviour, which could be explained by following:
+\begin{itemize}
+    \item Center velocity: the edge of the drop actually "touched" the bottom of the domain and this caused the velocity decrease. 
+    \item Aspect ratio: we comput the aspect ratio use the "edge" of the drop, which actually obtained its total height and total width. This is not that accurate as the drop's mass move to the edge and that makes edge falling down, which makes our calculate actually include the outer fluid, which makes the aspect ration final increase.
+\end{itemize}
 
 
-
-Centroid velocity versus $t^*$ for the drops. The results are presented for different Eo, keep $\rho_d/\rho_o$ = 10, $Oh_o=Oh_d$= 0.05:
+\subsection{Center Velocity at different Eo}
+In the previous section, we put center velocity versus $t^*$ for the drops. Here, the similar results are presented for different Eo, to compare Eo's effect on the center velocity. Still, we keep $\rho_d/\rho_o$ = 10, $Oh_o=Oh_d$= 0.05:
 
 \begin{figure}[H]
     \centering
@@ -566,13 +577,13 @@ Centroid velocity versus $t^*$ for the drops. The results are presented for diff
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Latex/figures/Trygg_allEo_velo.jpeg}
-        \caption{Dr. Tryggvason's result, Eo =12, 24, 28.8, 36, 48, 60, 72, 96, and 144}
+        \caption{Han and Tryggvason (1999) \cite{han1999axisymmetric}, Eo =12, 24, 28.8, 36, 48, 60, 72, 96, and 144}
         \label{fig:deformation2}
     \end{minipage}
 \end{figure}
 
 
-Could see, our result shows very similar to Dr. Tryggvason's result, where as Eo increase, the drop move slower, and at the lowest Eo drop (Eo=12), the drop actually reached steady-state velocity, where the other drops (higher Eo)'s velocity decrease when the deformation start to occur. \\
+Could see, our result shows very similar to Dr. Tryggvason's result, where as Eo increase, the drop move slower, which because the drop actually deform "less", and that makes it have lower drag and move faster than high Eo, where we can observed that higher Eo's velocity decrease much early and it happens when the visible deformation start to occur. \\
 
 The only thing different with the reference is th velocity magnitiude, which is because Dr. Tryggvason actually simulate the axis-symmetic (3D) drop, where we just simulated 2D drop. 
 
@@ -581,7 +592,9 @@ The only thing different with the reference is th velocity magnitiude, which is 
 
 
 \bibliographystyle{plain}
-\bibliography{LateX/references}
+\bibliography{references}
+
+
 
 \end{document}
 
