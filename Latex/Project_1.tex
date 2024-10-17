@@ -24,7 +24,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{algpseudocode}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{array}  % For wrapping text in columns
 \usepackage{lipsum} % For placeholder text (optional)
@@ -78,17 +78,11 @@ This study presents numerical simulations of a falling liquid drop through anoth
 
 
 
-
 \section{Introduction}
 
 The behavior of a falling drop through another fluid is a fundamental problem in fluid dynamics with wide-ranging applications. Understanding this phenomenon is crucial for processes such as rainfall formation, inkjet printing, spray cooling, and fuel injection systems. In these contexts, the dynamics of drop deformation, oscillation, and breakup directly affect efficiency and performance.
 
 For instance, in environmental science, the breakup of raindrops influences weather patterns and soil erosion. In industrial applications, controlling droplet behavior is essential for optimizing combustion in engines, improving coating technologies, and enhancing drug delivery in aerosols. Studying the transient evolution of a falling drop provides valuable insights that can be applied to design and optimize systems involving multiphase flows.
-
-
-
-
-
 
 % \subsection{Research Overview of Falling Drop Along time}
 \begin{table}[htbp]
@@ -130,7 +124,6 @@ Fuster \& Popinet, 2018 \cite{fuster2018allmach} & All-Mach method for bubble dy
 
 
 
-
 \section{Solution Approach}
 
 \subsection{Mathematical Formulation}
@@ -164,9 +157,9 @@ The computational steps are:
     \begin{enumerate}
         \item Update interface markers using Eq.~(\ref{eq:front_tracking}).
         \item Update $\rho$, $\mu$ based on the interface position.
-        \item Compute $\mathbf{F}_\sigma$ and distribute onto the grid.
+        \item Compute $\mathbf{F}_\sigma$ and distribute it onto the grid.
         \item Compute intermediate velocity $\mathbf{u}^*$ without pressure.
-        \item Solve pressure-Poisson equation for $p$.
+        \item Solve the pressure-Poisson equation for $p$.
         \item Correct velocity: $\mathbf{u} = \mathbf{u}^* - \nabla p / \rho$.
         \item Apply boundary conditions.
     \end{enumerate}
@@ -174,19 +167,12 @@ The computational steps are:
 
 
 
-
-
-
-
 \subsection{Problem Parameters}
 
 
 
-
-
-
-\subsubsection{Parameters Define The Problem}
-To construct the problem, we are using a finite domain to simulate the drop breakup, where the symbols and their description showing as follows:
+\subsubsection{Parameters Defining The Problem}
+To construct the problem, we are using a finite domain to simulate the drop breakup, where the symbols and their descriptions are as follows:
 \begin{table}[H]
 \scriptsize
 \centering
@@ -212,10 +198,7 @@ $g$ & Gravitational acceleration & $9.81 \, \text{m/s}^2$ \\ \hline
 
 \subsubsection{Domain Non-dimensional Numbers}
 
-
-
-We are using the non-dimensional numbers showing as follows:
-
+We are using the following non-dimensional numbers:
 
 \begin{table}[H]
 \scriptsize
@@ -224,7 +207,7 @@ We are using the non-dimensional numbers showing as follows:
 \renewcommand{\arraystretch}{1.2} % Adjust row height for better spacing
 \begin{tabularx}{\textwidth}{|c|c|X|c|X|}
 \hline
-\textbf{Symbol} & \textbf{Name} & \textbf{Definition and Physical significance} & \textbf{Typical Value} & \textbf{Example in Real Systems} \\ \hline
+\textbf{Symbol} & \textbf{Name} & \textbf{Definition and Physical Significance} & \textbf{Typical Value} & \textbf{Example in Real Systems} \\ \hline
 $t^* = \frac{t}{\sqrt{D/a_z}}$ & Non-dimensional time & Time scaled by drop diameter and acceleration & $0.1$ to $10$ & Rain droplet falling under gravity \\ \hline
 $Eo = \frac{\Delta \rho g D^2}{\sigma}$ & Eötvös number & Ratio of gravitational forces to surface tension forces & $10^{-2}$ to $10^2$ & Large rain droplet or industrial liquid flows \\ \hline
 $Oh_d = \frac{\mu_d}{\sqrt{\rho_d D \sigma}}$ & Ohnesorge number (drop) & Ratio of viscous forces to inertial and surface tension forces & $0.01$ to $0.1$ & Small liquid droplets like water in air \\ \hline
@@ -236,12 +219,9 @@ $\mu^* = \frac{\mu_d}{\mu_o}$ & Viscosity ratio & Ratio of the viscosity of the 
 \end{table}
 
 
-\subsection{Control Non-Dimensional numbers using $a_z$ and $\mu_D$}
+\subsection{Control Non-Dimensional Numbers using $a_z$ and $\mu_D$}
 
-
-As the major non-dimensional numbers are Ohnesorge number and Eotvos number, we want to obtain more information of the effect from each of them. As they are independent, we can use choose our basic parameters to control them independently:
-
-
+As the major non-dimensional numbers are the Ohnesorge number and Eötvös number, we want to obtain more information on the effect of each of them. Since they are independent, we can choose our basic parameters to control them independently:
 
 \begin{align}
     a_z  &= \frac{\sigma Eo}{\Delta \rho D^2} = \frac{100Eo}{12} 
@@ -249,11 +229,11 @@ As the major non-dimensional numbers are Ohnesorge number and Eotvos number, we 
     & \mu_D &= Oh_d \sqrt{\rho_d D \sigma} = \sqrt{6000} \, Oh_d
 \end{align}
 
-By seperatly change these key parameters, we could seperatly change the non-dimensional numbers, and discuss their effect of the drop deform scheme.
+By separately changing these key parameters, we can separately change the non-dimensional numbers and discuss their effect on the drop deformation scheme.
 
 \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \captionof{table}{Parameters setting regards Eo}
+    \captionof{table}{Parameter Settings Regarding Eo}
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
         $\rho_o$ & $\rho_d$ & $\Delta \rho$ & $D$ & $\sigma$ & $a_z$  \\ \hline
@@ -263,25 +243,20 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 \hfill
 \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \captionof{table}{Parameters setting regards Oh}
+    \captionof{table}{Parameter Settings Regarding Oh}
     \begin{tabular}{|c|c|c|c|}
         \hline
-        $\rho_D$ & $D$ & \sigma$ & $\mu_D$  \\ \hline
-        10 & 2 & 300 &  $\sqrt{6000}Oh_o$ \\ \hline
+        $\rho_d$ & $D$ & $\sigma$ & $\mu_D$  \\ \hline
+        10 & 2 & 300 &  $\sqrt{6000} \, Oh_o$ \\ \hline
     \end{tabular}
 \end{minipage}
-
-
 
 
 
 \subsection{Simulation Setup}
 \subsubsection{Domain, Boundary Condition, and Grid Independence}
 
-
-The Domain is set up as follows: we define the domain length, height, and the drop initial height from the bottom boundary. 
-
-
+The domain is set up as follows: we define the domain length, height, and the drop's initial height from the bottom boundary.
 
 \begin{table}[ht]
 \scriptsize
@@ -290,7 +265,7 @@ The Domain is set up as follows: we define the domain length, height, and the dr
 \renewcommand{\arraystretch}{1.5} % Adjust row height
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-\multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
+\multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary Condition}} \\
 \hline
 $L_x$ & $L_y$ & $L_c$ & $D$   & Top & Bottom & Left & Right \\
 \hline
@@ -299,8 +274,8 @@ $10D$ & $30D$ & $0.9L_y$ & $D$   & $v_{i} = v_{i-1}$ & $v_i = v_{i+1}$ & $u_i = 
 \end{tabular}
 \end{table}
 
+It should be noted that we set up the boundary condition as Neumann boundary conditions ($u_i = u_{i+1}$, where $u$ and $i$ are in the $x$ or $y$ direction simultaneously, and $i$ and $i+1$ are one inside the domain and one outside), as we try to simulate the "infinite" boundary result, although in our test, the drop still won't pass the boundary when it touches the bottom.
 
-Should be noticed, we set up the boundary condition as Neumann Boundary condition ($u_i = u_{i+1}$, where u and i are in x or y direction simuntiuously, and i and i+1 is one in the domain and one outside), as we try to set up to similate the "infinite" boundary result, although in our test, the drop still won't pass the boundary when it touch the bottom. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{Latex/figures/Domain_grid_indep.jpg}
@@ -308,21 +283,11 @@ Should be noticed, we set up the boundary condition as Neumann Boundary conditio
     \label{deformation}
 \end{figure}
 
-
-In this part, we also performed the grid independence study, to confirm the best resolution which could balance the accuracy and the cost, which include the time and computational resource. The finest grid resolution we could finish in time is the one is 512x768, which actually cost 2 days in the computer to finish. After compare with 256x384, we find the 256x384 preform well, which means we could almost ignore the difference, and it could simulate and get result at high Eo.
-
-
-
-
-
-
-
-
+In this part, we also performed the grid independence study to confirm the best resolution that could balance accuracy and cost, which includes time and computational resources. The finest grid resolution we could complete in time is 512x768, which actually costs 2 days on the computer to finish. After comparing with 256x384, we find that the 256x384 performs well, which means we can almost ignore the difference, and it can simulate and get results at high $Eo$.
 
 \section{Results, Compare, and Discussion}
 
 \subsection{Breakup Map}
-
 
 \begin{figure}[H]
     \centering
@@ -331,27 +296,24 @@ In this part, we also performed the grid independence study, to confirm the best
     \label{fig:deformation}
 \end{figure}
 
-
 In the breakup map obtained for a 2D drop (or infinite cylinder in 3D), we observe the following trends:
 
 \begin{itemize}
-    \item Forward breakup (in the direction of the drop's motion) for Eo = 12 and Eo = 24.
-    \item Backward breakup for Eo > 24, leading to a "disk-like" shape.
+    \item Forward breakup (in the direction of the drop's motion) for $Eo = 12$ and $Eo = 24$.
+    \item Backward breakup for $Eo > 24$, leading to a "disk-like" shape.
 \end{itemize}
 
-When Eo is low (e.g., Eo = 12), gravitational forces dominate the motion of the falling drop. At this Eo value, surface tension remains strong enough to maintain the drop's shape for a time, but it eventually leads to a slow breakup. Initially, the drop exhibits a near-spherical shape, but as it falls, the pressure at the front-center increases, pushing fluid toward the edges. This leads to elongation and flattening, eventually resulting in a backward-facing bag. As Eo increases (e.g., Eo = 24), this process accelerates, and the edges flatten more rapidly, leading to the formation of a disk-like structure.
+When $Eo$ is low (e.g., $Eo = 12$), gravitational forces dominate the motion of the falling drop. At this $Eo$ value, surface tension remains strong enough to maintain the drop's shape for a time, but it eventually leads to a slow breakup. Initially, the drop exhibits a near-spherical shape, but as it falls, the pressure at the front-center increases, pushing fluid toward the edges. This leads to elongation and flattening, eventually resulting in a backward-facing bag. As $Eo$ increases (e.g., $Eo = 24$), this process accelerates, and the edges flatten more rapidly, leading to the formation of a disk-like structure.
 
-At higher Eo values (e.g., Eo = 48 or above), surface tension is too weak to maintain the drop's shape. The drop initially forms a disk-like shape but soon retracts at the center, creating a narrow point between the edge and center. This thinning ultimately results in breakup, generating smaller droplets (shear breakup). These observations are consistent with experimental findings, though the exact breakup pattern may vary depending on the non-dimensional parameters.
-
-
+At higher $Eo$ values (e.g., $Eo = 48$ or above), surface tension is too weak to maintain the drop's shape. The drop initially forms a disk-like shape but soon retracts at the center, creating a narrow point between the edge and center. This thinning ultimately results in breakup, generating smaller droplets (shear breakup). These observations are consistent with experimental findings, though the exact breakup pattern may vary depending on the non-dimensional parameters.
 
 \subsection{Center Velocity and Aspect Ratio}
-Figure \ref{fig:velocity_aspect} shows the time evolution of the center velocity and aspect ratio for two different cases: (1) Eo = 12, Oh = 0.05, and (2) Eo = 28.8, Oh = 0.125, with a fixed density ratio $\rho_d / \rho_o = 10$.
+Figure \ref{fig:velocity_aspect} shows the time evolution of the center velocity and aspect ratio for two different cases: (1) $Eo = 12$, $Oh = 0.05$, and (2) $Eo = 28.8$, $Oh = 0.125$, with a fixed density ratio $\rho_d / \rho_o = 10$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/All_Eo=12__t=0.28.png}
-    \caption{Velocity and aspect ratio for Eo = 12, Oh = 0.05.}
+    \caption{Velocity and aspect ratio for $Eo = 12$, $Oh = 0.05$.}
     \label{fig:velocity_aspect}
 \end{figure}
 
@@ -360,18 +322,15 @@ Initially, the drop's velocity increases due to gravity. As the drop deforms and
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Latex/figures/All_Oh=1.25_t=0.44.png}
-    \caption{Velocity and aspect ratio for Eo = 28.8, Oh = 0.125.}
+    \caption{Velocity and aspect ratio for $Eo = 28.8$, $Oh = 0.125$.}
     \label{fig:velocity_aspect}
 \end{figure}
 
 At the end of the simulation, we observe abnormal behavior in the velocity and aspect ratio curves. This is caused by the interaction between the drop's edge and the bottom boundary of the domain. As the drop's edge touches the boundary, velocity decreases sharply, and the aspect ratio calculation includes outer fluid, leading to an artificial increase. Future simulations could reduce these boundary effects by employing an extended domain or finer grid resolution near the boundaries.
 
 
-
-
-
-\subsection{Center Velocity at Different Eo Values}
-Figure \ref{fig:velocity_comparison} compares the center velocity at different Eo values (Eo = 12,24, 72) to illustrate the effect of increasing Eötvös numbers on the drop’s motion. As Eo increases, the drop's velocity decreases more rapidly, indicating that greater deformation and increased drag slow down the drop more significantly at higher Eo values. For lower Eo values (e.g., Eo = 12), the drop maintains its velocity for a longer period before experiencing significant deformation, resulting in a smoother decrease in velocity.
+\subsection{Center Velocity at Different $Eo$ Values}
+Figure \ref{fig:velocity_comparison} compares the center velocity at different $Eo$ values ($Eo = 12$, $24$, $72$) to illustrate the effect of increasing Eötvös numbers on the drop’s motion. As $Eo$ increases, the drop's velocity decreases more rapidly, indicating that greater deformation and increased drag slow down the drop more significantly at higher $Eo$ values. For lower $Eo$ values (e.g., $Eo = 12$), the drop maintains its velocity for a longer period before experiencing significant deformation, resulting in a smoother decrease in velocity.
 
 The comparison also highlights a key difference between 2D and 3D simulations. In 2D simulations like ours, the absence of an axis of symmetry results in lower drag, allowing the drop to move faster than in 3D cases. This explains why our velocity magnitudes are slightly higher than those reported in axisymmetric 3D simulations, such as those by Han and Tryggvason (1999). Nonetheless, the overall trends are consistent.
 
@@ -380,34 +339,22 @@ The comparison also highlights a key difference between 2D and 3D simulations. I
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/velocity_profile_compare.jpg}
-        \caption{Center velocity vs. time for Eo = 12, 24, 72.}
+        \caption{Center velocity vs. time for $Eo = 12$, $24$, $72$.}
         \label{fig:velocity_comparison}
     \end{minipage}
     \hspace{0.05\textwidth}
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Trygg_allEo_velo.jpeg}
-        \caption{Han and Tryggvason (1999) velocity comparison for various Eo.}
+        \caption{Han and Tryggvason (1999) velocity comparison for various $Eo$.}
         \label{fig:trygg_comparison}
     \end{minipage}
 \end{figure}
 
-Our results are qualitatively similar to those reported in Han and Tryggvason’s 3D simulations, showing that higher Eo leads to faster deformation and more rapid velocity reduction. As the drop becomes more deformed, its drag increases, slowing down the drop at a much earlier stage than at lower Eo values. While our simulations capture the essential physics of the problem, future work should aim to extend the model to 3D to further validate the results and achieve closer agreement with experimental data.
-
+Our results are qualitatively similar to those reported in Han and Tryggvason’s 3D simulations, showing that higher $Eo$ leads to faster deformation and more rapid velocity reduction. As the drop becomes more deformed, its drag increases, slowing down the drop at a much earlier stage than at lower $Eo$ values. While our simulations capture the essential physics of the problem, future work should aim to extend the model to 3D to further validate the results and achieve closer agreement with experimental data.
 
 
 \bibliographystyle{plain}
 \bibliography{references}
 
-
-
 \end{document}
-
-
-
-
-
-
-
-
-
