@@ -63,7 +63,7 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\title{Falling Drop Simulation--Review}
+\title{Falling Drop Simulation--Reapproach}
 \author{Haobo Zhao}
 \date{\today}
 
@@ -71,183 +71,109 @@
 
 \maketitle
 
-% \begin{abstract}
-% This report presents a numerical simulation of the transient evolution of a falling drop in a two-fluid system, focusing on the deformation, breakup, and trajectory of the drop as it descends through a stationary fluid under the influence of gravity. The study utilizes the Volume of Fluid (VOF) method to track the interface between the immiscible fluids, capturing the complex interplay of forces such as buoyancy, inertia, viscosity, and surface tension. The governing equations are solved in a dimensionless form, characterized by the Reynolds and Bond numbers, to ensure generality and scalability to different physical systems. For computational efficiency, the governing parameters are chosen such that accurate results are obtained on a relatively coarse grid, while a grid refinement study confirms the validity of the solutions. The simulation provides insight into the dynamics of falling drops, such as shape deformation, terminal velocity, and the influence of varying nondimensional parameters, with potential applications in industrial processes, meteorology, and multiphase flow systems. The results are compared with prior literature to validate the model and identify avenues for future investigation.
-% \end{abstract}
 
-% \section{Introduction}
-% The behavior of falling drops has garnered significant attention across various disciplines, including chemical engineering, environmental sciences, and industrial processes, due to its fundamental and practical implications in both natural and engineered systems. In nature, the dynamics of raindrops as they fall through the atmosphere affect precipitation patterns, while in industrial contexts, liquid droplets play a key role in processes such as spray drying, inkjet printing, and fuel atomization in combustion systems \cite{yarin2006drop, frohn2000dynamics}. Accurately predicting the motion, deformation, and breakup of a falling drop is crucial for optimizing performance in these systems.
-
-% The dynamics of a falling drop are governed by the interplay of several physical forces, including gravity, inertia, surface tension, and viscous stresses. These forces collectively determine the drop's shape evolution, trajectory, and potential breakup as it moves through a quiescent fluid. 
+\begin{abstract}
+This study presents numerical simulations of a falling liquid drop through another fluid using the Front Tracking method to accurately capture interface dynamics. The incompressible Navier-Stokes equations are solved to investigate the effects of varying Eötvös numbers ($Eo$) and Ohnesorge numbers ($Oh$) on the drop's deformation, velocity, and breakup behavior. A grid independence study ensures the accuracy of the results. Simulations reveal that higher $Eo$ leads to increased deformation and earlier breakup, while $Oh$ influences viscous effects on drop dynamics. Comparisons with existing literature validate the model, providing insights applicable to processes like rainfall formation, inkjet printing, and spray cooling.
+\end{abstract}
 
 
-% The study of these phenomena dates back to the pioneering work of Worthington \cite{worthington1876study}, who first captured the behavior of falling drops in detailed experimental studies. Since then, significant advancements have been made in both experimental and numerical methods for modeling drop dynamics. Modern approaches, such as those discussed in our well-known professor Prosperetti \cite{prosperetti2015life} and Tryggvason et al. \cite{tryggvason2011multiphase}, utilize high-fidelity numerical simulations to capture complex interactions between the fluid phases and the evolving interface.
-
-% This study aims to numerically simulate the transient evolution of a falling drop in a two-fluid system using the Volume of Fluid (VOF) method. By selecting computationally convenient governing parameters, the simulation provides insights into the deformation and dynamics of the drop, with a focus on the effects of nondimensional numbers such as the Reynolds and Bond numbers. The results of this simulation are compared to existing literature to validate the model and explore the implications of varying these parameters on drop behavior.
 
 
-\section{Introduction, Background}
+\section{Introduction}
 
-\subsection{Introduction}
+The behavior of a falling drop through another fluid is a fundamental problem in fluid dynamics with wide-ranging applications. Understanding this phenomenon is crucial for processes such as rainfall formation, inkjet printing, spray cooling, and fuel injection systems. In these contexts, the dynamics of drop deformation, oscillation, and breakup directly affect efficiency and performance.
+
+For instance, in environmental science, the breakup of raindrops influences weather patterns and soil erosion. In industrial applications, controlling droplet behavior is essential for optimizing combustion in engines, improving coating technologies, and enhancing drug delivery in aerosols. Studying the transient evolution of a falling drop provides valuable insights that can be applied to design and optimize systems involving multiphase flows.
 
 
 
 
 
-\subsection{Research Overview of Falling Drop Along time}
+
+% \subsection{Research Overview of Falling Drop Along time}
+\begin{table}[htbp]
+\scriptsize
+\centering
+\caption{Key Studies and Approaches on Drop Dynamics (Part 1)}
+\renewcommand{\arraystretch}{1.2} % Adjust row height for better spacing
+\begin{tabularx}{\textwidth}{|c|X|X|}
+\hline
+\textbf{Ref} & \textbf{Key Approach} & \textbf{Result/Contribution} \\ \hline
+Stokes, 1851 \cite{stokes1851pendulums} & Analytic solution for viscous drag on small spheres & Established Stokes' law, applicable to small falling droplets \\ \hline
+Worthington, 1876 \cite{worthington1876study} & First experimental capture of falling drop dynamics & Laid the experimental foundation for drop dynamics studies \\ \hline
+Rayleigh, 1878 \cite{rayleigh1878instability} & Stability of liquid jets & Foundation for instability phenomena in fluid dynamics \\ \hline
+Taylor, 1934 \cite{taylor1934emulsions} & Study of emulsion formation in flow fields & Key insights into the relationship between surface tension and flow \\ \hline
+Proudman \& Pearson, 1957 \cite{proudman1957expansion} & Expansion at small Reynolds number & Showed shape deformation and velocity relationship for falling droplets \\ \hline
+Hirt \& Nichols, 1981 \cite{hirt1981volume} & Volume of Fluid (VOF) method for free boundary dynamics & Developed a widely-used numerical method for multiphase flow simulations \\ \hline
+Brackbill et al., 1992 \cite{brackbill1992continuum} & Surface tension models in numerical methods & Introduced surface tension models into methods like VOF \\ \hline
+\end{tabularx}
+\end{table}
 
 \begin{table}[htbp]
 \scriptsize
 \centering
-\caption{Key Studies and Approaches on Drop Dynamics (Chronological Order)}
+\caption{Key Studies and Approaches on Drop Dynamics (Part 2)}
 \renewcommand{\arraystretch}{1.2} % Adjust row height for better spacing
 \begin{tabularx}{\textwidth}{|c|X|X|}
 \hline
-\textbf{Ref}                 & \textbf{Key Approach}                                                 & \textbf{Result/Contribution}                                                            \\ \hline
-Stokes, 1851\cite{stokes1851pendulums}                  & Analytic solution for viscous drag on small spheres                    & Established Stokes' law, applicable to small falling droplets                           \\ \hline
-Worthington, 1876  \cite{worthington1876study}          & First experimental capture of falling drop dynamics                    & Laid the experimental foundation for drop dynamics studies                              \\ \hline
-Rayleigh, 1878\cite{rayleigh1878stability}              & Stability of liquid jets                                               & Foundation for instability phenomena in fluid dynamics                                  \\ \hline
-Taylor, 1934\cite{taylor1934emulsions}                 & Study of emulsion formation in flow fields                             & Key insights into the relationship between surface tension and flow                     \\ \hline
-Proudman \& Pearson, 1957\cite{proudman1957expansion}    & Expansion at small Reynolds number                                     & Showed shape deformation and velocity relationship for falling droplets                 \\ \hline
-Hirt \& Nichols, 1981\cite{hirt1981vof}        & Volume of Fluid (VOF) method for free boundary dynamics                & Developed a widely-used numerical method for multiphase flow simulations                \\ \hline
-Brackbill et al., 1992\cite{brackbill1992surface}       & Surface tension models in numerical methods                            & Introduced surface tension models into methods like VOF                                 \\ \hline
-Peregrine et al., 1997\cite{peregrine1997impact}       & Investigation of drop impact on liquid surfaces                        & Studied splashing phenomena during droplet impacts                                      \\ \hline
-Eggers, 1997\cite{eggers1997nonlinear}                 & Nonlinear dynamics and breakup of free-surface flows                   & Described the nonlinearity and singularities in droplet splitting                       \\ \hline
-Han \& Tryggvason, 1999\cite{han1999axisymmetric}      & Axisymmetric drop breakup using CFD                                    & Studied drop breakup with parameters like Eo, Oh, Re, and We                            \\ \hline
-Brenner et al., 1999\cite{brenner1999breakup}         & Study of viscous liquid breakup                                        & Provided detailed analysis of droplet breakup mechanisms                                \\ \hline
-Thoroddsen et al., 2008\cite{thoroddsen2008highspeed}      & High-speed photography of droplet impacts                             & Captured droplet collision and fragmentation at extreme velocities                      \\ \hline
-Popinet, 2009\cite{popinet2009gerris}                & Accurate adaptive solver for interfacial flows                        & Developed Gerris, an open-source tool for high-precision simulation of droplet dynamics \\ \hline
-Prosperetti, 2015\cite{prosperetti2015fluidfluid}            & Numerical simulations of fluid-fluid interactions with high accuracy   & Improved accuracy in the simulation of fluid-fluid interaction phenomena                \\ \hline
-Fuster \& Popinet, 2018\cite{fuster2018allmach}      & All-Mach method for bubble dynamics and surface tension simulations    & Provided simulations of complex two-phase flows with high performance computing         \\ \hline
+\textbf{Ref} & \textbf{Key Approach} & \textbf{Result/Contribution} \\ \hline
+Peregrine et al., 1997 \cite{peregrine1997impact} & Investigation of drop impact on liquid surfaces & Studied splashing phenomena during droplet impacts \\ \hline
+Eggers, 1997 \cite{eggers1997nonlinear} & Nonlinear dynamics and breakup of free-surface flows & Described the nonlinearity and singularities in droplet splitting \\ \hline
+Han \& Tryggvason, 1999 \cite{han1999axisymmetric} & Axisymmetric drop breakup using CFD & Studied drop breakup with parameters like Eo, Oh, Re, and We \\ \hline
+Brenner et al., 1999 \cite{brenner1999breakup} & Study of viscous liquid breakup & Provided detailed analysis of droplet breakup mechanisms \\ \hline
+Thoroddsen et al., 2008 \cite{thoroddsen2008highspeed} & High-speed photography of droplet impacts & Captured droplet collision and fragmentation at extreme velocities \\ \hline
+Popinet, 2009 \cite{popinet2009accurate} & Accurate adaptive solver for interfacial flows & Developed Gerris, an open-source tool for high-precision simulation of droplet dynamics \\ \hline
+Prosperetti, 2015 \cite{prosperetti2015life} & Numerical simulations of fluid-fluid interactions with high accuracy & Improved accuracy in the simulation of fluid-fluid interaction phenomena \\ \hline
+Fuster \& Popinet, 2018 \cite{fuster2018allmach} & All-Mach method for bubble dynamics and surface tension simulations & Provided simulations of complex two-phase flows with high-performance computing \\ \hline
 \end{tabularx}
 \end{table}
 
 
 
-% \subsection{Overview of the Falling Drop Dynamics}
-
-% The dynamics of a falling drop through a fluid medium, such as air or another liquid, involve complex physical processes that depend on various parameters, including fluid properties, drop size, velocity, and external forces such as gravity. Understanding these phenomena is critical in fields such as fluid mechanics, meteorology, inkjet printing, and spray technology. The evolution of a falling drop can be described in several stages:
-
-% \subsubsection*{1. Initial Formation and Detachment}
-% When a liquid drop detaches from a nozzle, surface tension forces dominate, pulling the drop into a spherical shape to minimize surface energy. The balance between surface tension, gravity, and inertia determines the size of the drop at detachment. Smaller drops are more spherical due to stronger surface tension forces relative to gravity \cite{worthington1876study}.
-
-% \subsubsection*{2. Acceleration and Deformation}
-% As the drop falls, it accelerates under gravity. If falling through air, the drag force exerted by the air increases as the drop's velocity increases. The shape of the drop may deform from a perfect sphere due to the balance between the drop’s inertia and the aerodynamic drag. The deformation depends on several dimensionless numbers:
-% \begin{itemize}
-%     \item \textbf{Reynolds number (Re)}: Characterizes the relative importance of inertial forces to viscous forces in the surrounding fluid. Higher Re typically results in more turbulent flow conditions and greater deformation.
-%     \item \textbf{Bond number (Bo)}: Relates gravitational forces to surface tension. Larger Bo results in greater deformation, as gravity stretches the drop into an oblate shape \cite{tryggvason2011multiphase}.
-% \end{itemize}
-
-% \subsubsection*{3. Oscillation and Vibration}
-% For sufficiently large drops, instabilities at the surface can cause oscillations and vibrations as the drop moves through the fluid. These oscillations arise from the interplay of inertia, surface tension, and drag. Surface tension restores the spherical shape, while inertia drives the oscillation. This behavior can be damped or amplified depending on drop size, speed, and the surrounding fluid \cite{hirt1981volume}.
-
-% \subsubsection*{4. Terminal Velocity}
-% As the drop continues to fall, drag force increases until it balances the gravitational force, leading to a constant velocity known as \textbf{terminal velocity}. The terminal velocity depends on the drop’s size, density, and the properties of the surrounding medium. For small water droplets falling in air, this terminal velocity is relatively low due to air resistance, but for larger drops, terminal velocity can be significantly higher \cite{prosperetti2015life}.
-
-% \subsubsection*{5. Deformation and Breakup}
-% At higher velocities or in more turbulent conditions, the drop experiences significant deformation. Two primary modes of deformation are observed:
-% \begin{itemize}
-%     \item \textbf{Oblate Deformation}: The drop flattens along its vertical axis due to aerodynamic drag.
-%     \item \textbf{Internal Circulation}: Viscous forces induce internal fluid circulation, redistributing the drop's mass.
-% \end{itemize}
-% If the velocity or size exceeds a critical threshold, the drop undergoes \textbf{breakup}, fragmenting into smaller droplets. Common breakup modes include:
-% \begin{itemize}
-%     \item \textbf{Bag Breakup}: A thin film forms at the center and inflates outward, bursting into smaller droplets.
-%     \item \textbf{Sheet or Strip Breakup}: Surface instabilities form elongated strips, fragmenting into droplets.
-%     \item \textbf{Catastrophic Breakup}: For very large drops or high velocities, the drop explosively fragments into many small droplets \cite{brackbill1992continuum}.
-% \end{itemize}
-
-% \subsubsection*{6. Splashing Upon Impact}
-% If the drop impacts a solid surface or another fluid, it may exhibit a range of behaviors:
-% \begin{itemize}
-%     \item \textbf{Spread}: The drop may spread into a thin sheet upon impact, especially on smooth surfaces.
-%     \item \textbf{Rebound}: If the surface is hydrophobic or the velocity is low, the drop may retract and bounce off.
-%     \item \textbf{Splashing}: At higher velocities, the drop splatters and ejects smaller satellite droplets. Splashing dynamics depend on surface roughness, impact speed, and fluid viscosity \cite{peregrine1997splashing}.
-% \end{itemize}
-
-% \subsubsection*{7. Influence of Physical Parameters}
-% The behavior of falling drops is highly dependent on nondimensional numbers:
-% \begin{itemize}
-%     \item \textbf{Reynolds Number (Re)}: Higher Re numbers, often due to larger drops or faster velocities, lead to more turbulent flow conditions and increased drag.
-%     \item \textbf{Weber Number (We)}: Represents the ratio of inertial forces to surface tension, where higher values lead to more severe deformations and breakup.
-%     \item \textbf{Ohnesorge Number (Oh)}: Describes the influence of viscosity in the drop. High viscosity tends to suppress oscillations and breakup \cite{eggers1997nonlinear}.
-% \end{itemize}
-% Changes in temperature, viscosity, surface tension, or ambient pressure can significantly alter the drop's behavior. For example, lower surface tension or higher ambient pressures often result in greater deformations and more complex breakup dynamics.
-
-
-
-
-
-% \section{Problem Formulation}
-% The system involves a liquid drop falling through a stationary fluid under the influence of gravity. The problem is governed by the Navier-Stokes equations for incompressible flow:
-% \begin{equation}
-%     \rho \left( \frac{\partial \mathbf{u}}{\partial t} + \mathbf{u} \cdot \nabla \mathbf{u} \right) = -\nabla p + \mu \nabla^2 \mathbf{u} + \mathbf{F_g},
-% \end{equation}
-% where $\rho$ is the density, $\mathbf{u}$ is the velocity, $p$ is the pressure, $\mu$ is the dynamic viscosity, and $\mathbf{F_g}$ represents the gravitational force acting on the drop.
-
-% The interface between the drop and the surrounding fluid is tracked using the Volume of Fluid (VOF) method, which is particularly suited for simulating two-fluid systems where interface deformation plays a key role.
-
 
 \section{Solution Approach}
-\subsection{Formulation}
+
+\subsection{Mathematical Formulation}
+
+The motion of a falling drop is governed by the incompressible Navier-Stokes equations:
+
+\begin{equation}
+    \nabla \cdot \mathbf{u} = 0, \quad
+    \rho \left( \frac{\partial \mathbf{u}}{\partial t} + \mathbf{u} \cdot \nabla \mathbf{u} \right ) = -\nabla p + \nabla \cdot \left[ \mu \left( \nabla \mathbf{u} + (\nabla \mathbf{u})^\mathrm{T} \right) \right] + \rho \mathbf{g} + \mathbf{F}_\sigma,
+    \label{eq:navier_stokes}
+\end{equation}
+
+where $\mathbf{u}$ is velocity, $p$ is pressure, $\rho$ is density, $\mu$ is viscosity, $\mathbf{g}$ is gravity, and $\mathbf{F}_\sigma$ is the surface tension force modeled as $\mathbf{F}_\sigma = \sigma \kappa \delta_s \mathbf{n}$ \cite{brackbill1992continuum}, with $\sigma$ surface tension coefficient, $\kappa$ interface curvature, $\delta_s$ Dirac delta function at the interface, and $\mathbf{n}$ unit normal vector.
+
+We employ the Front Tracking method \cite{tryggvason2011multiphase} to capture the interface, representing it with marker points $\mathbf{x}_f$ moving with the fluid velocity:
+
+\begin{equation}
+    \frac{d \mathbf{x}_f}{d t} = \mathbf{u}(\mathbf{x}_f).
+    \label{eq:front_tracking}
+\end{equation}
+
+\subsection{Numerical Method}
+
+The equations are discretized using finite differences on a staggered grid; time integration employs a second-order Runge-Kutta scheme. The pressure-Poisson equation, derived from the continuity equation, is solved iteratively to enforce incompressibility.
+
+The computational steps are:
+
+\begin{enumerate}
+    \item Initialize $\mathbf{u}$, $p$, $\rho$, $\mu$, and interface markers $\mathbf{x}_f$.
+    \item For each time step:
+    \begin{enumerate}
+        \item Update interface markers using Eq.~(\ref{eq:front_tracking}).
+        \item Update $\rho$, $\mu$ based on the interface position.
+        \item Compute $\mathbf{F}_\sigma$ and distribute onto the grid.
+        \item Compute intermediate velocity $\mathbf{u}^*$ without pressure.
+        \item Solve pressure-Poisson equation for $p$.
+        \item Correct velocity: $\mathbf{u} = \mathbf{u}^* - \nabla p / \rho$.
+        \item Apply boundary conditions.
+    \end{enumerate}
+\end{enumerate}
 
 
-\subsection{Numerical Approach}
 
-\subsubsection{Finite Volume Method}
-
-\subsubsection{Front Tracking}
-
-
-
-\subsubsection{Numerical Algorithm }
-
-\begin{algorithm}[H]
-\tiny
-\caption{Navier-Stokes Solver}
-\begin{algorithmic}[1]
-\STATE \textbf{Initialize} grid parameters, velocity fields $u$, $v$, pressure field $p$, density $r$, viscosity $m$, etc.
-\FOR{each time step $is = 1$ to $nstep$}
-    \STATE \textbf{Store Previous State}: Save current velocity and physical quantities as $u^n$, $v^n$, $r^n$, $m^n$
-    \FOR{Runge-Kutta substeps $substep = 1$ to $3$}
-        \STATE \textbf{Advection}
-        \FOR{each $u$ grid point $(i,j)$}
-            \STATE Compute temporary velocity $u^*(i,j)$ including convection terms
-        \ENDFOR
-        \FOR{each $v$ grid point $(i,j)$}
-            \STATE Compute temporary velocity $v^*(i,j)$ including convection terms
-        \ENDFOR
-        
-        \STATE \textbf{Viscous Terms}
-        \FOR{each $u$ grid point $(i,j)$}
-            \STATE Add viscous contributions to $u^*(i,j)$
-        \ENDFOR
-        \FOR{each $v$ grid point $(i,j)$}
-            \STATE Add viscous contributions to $v^*(i,j)$
-        \ENDFOR
-        
-        \STATE \textbf{Pressure Projection}
-        \STATE \textbf{Assemble Pressure Poisson Equation}
-        \STATE Use Successive Over-Relaxation (SOR) method to solve for pressure field $p$
-        
-        \STATE \textbf{Velocity Correction}
-        \FOR{each $u$ grid point $(i,j)$}
-            \STATE $u(i,j) = u^*(i,j) - \frac{\Delta t}{\rho \Delta x}(p(i+1,j) - p(i,j))$
-        \ENDFOR
-        \FOR{each $v$ grid point $(i,j)$}
-            \STATE $v(i,j) = v^*(i,j) - \frac{\Delta t}{\rho \Delta y}(p(i,j+1) - p(i,j))$
-        \ENDFOR
-        
-        \STATE \textbf{Runge-Kutta Time Integration}
-        \IF{$substep = 2$}
-            \STATE Update velocity and physical quantities: $u = 0.75 \times u^n + 0.25 \times u$, similarly for $v$, $r$, $m$
-        \ELSIF{$substep = 3$}
-            \STATE Update velocity and physical quantities: $u = \frac{1}{3} \times u^n + \frac{2}{3} \times u$, similarly for $v$, $r$, $m$
-        \ENDIF
-    \ENDFOR
-\ENDFOR
-\end{algorithmic}
-\end{algorithm}
 
 
 
@@ -285,20 +211,6 @@ $g$ & Gravitational acceleration & $9.81 \, \text{m/s}^2$ \\ \hline
 \end{table}
 
 \subsubsection{Domain Non-dimensional Numbers}
-% We need non-dimensional time, which could lead more accurate comparison with the literature.
-% \begin{equation}
-%     t^* = \frac{tV}{D}
-% \end{equation}
-
-% Where, V is initial relative velocity, and D is the drop's initial diameter.
-
-% \begin{equation}
-%     We = \frac{\rho_0 V^2 D}{\sigma}
-% \end{equation}
-
-% \begin{equation}
-%     Re = \frac{\rho_9 V D}{\mu_0}
-% \end{equation}
 
 
 
@@ -341,7 +253,7 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 
 \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \captionof{table}{Parameter Values 1}
+    \captionof{table}{Parameters setting regards Eo}
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
         $\rho_o$ & $\rho_d$ & $\Delta \rho$ & $D$ & $\sigma$ & $a_z$  \\ \hline
@@ -351,11 +263,11 @@ By seperatly change these key parameters, we could seperatly change the non-dime
 \hfill
 \begin{minipage}[t]{0.45\textwidth}
     \centering
-    \captionof{table}{Parameter Values 2}
-    \begin{tabular}{|c|c|c|c|c|c|}
+    \captionof{table}{Parameters setting regards Oh}
+    \begin{tabular}{|c|c|c|c|}
         \hline
-        $\rho_o$ & $\rho_d$ & $\Delta \rho$ & $D$ & $\sigma$ & $a_z$  \\ \hline
-        1 & 10 & 9 & 2 & 300 &  $\frac{100 Eo}{\sigma}$ \\ \hline
+        $\rho_D$ & $D$ & \sigma$ & $\mu_D$  \\ \hline
+        10 & 2 & 300 &  $\sqrt{6000}Oh_o$ \\ \hline
     \end{tabular}
 \end{minipage}
 
@@ -388,7 +300,7 @@ $10D$ & $30D$ & $0.9L_y$ & $D$   & $v_{i} = v_{i-1}$ & $v_i = v_{i+1}$ & $u_i = 
 \end{table}
 
 
-Should be noticed, we set up the boundary condition as Neumann Boundary condition ($u_i = u_{i+1}$, where u and i are in x or y direction simuntiuously, and i and i+1 is one in the domain and one outside), as we ty to set up to similate the "infinite" boundary result, although in our test, the drop still won't pass the boundary when it touch the bottom. 
+Should be noticed, we set up the boundary condition as Neumann Boundary condition ($u_i = u_{i+1}$, where u and i are in x or y direction simuntiuously, and i and i+1 is one in the domain and one outside), as we try to set up to similate the "infinite" boundary result, although in our test, the drop still won't pass the boundary when it touch the bottom. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{Latex/figures/Domain_grid_indep.jpg}
@@ -397,33 +309,7 @@ Should be noticed, we set up the boundary condition as Neumann Boundary conditio
 \end{figure}
 
 
-In this part, we also performed the grid independence study, to confirm the best resolution which could balance the accuracy and the cost, which include the time and computational resouce. The finest grid resolution we could finish in time is the one is 512x768, which actually cost 2 days in the computer to finish. After compare with 256x384, we find the 256x384 preform well, which means we could almost ignore the difference, and it could simulate and get result at high Eo.
-
-
-
-
-% \begin{figure}[H]
-%     \centering
-%     \begin{overpic}[width=0.6\textwidth]{Latex/figures/Domain.jpg}
-%         \put(40,40){% 调整这些坐标以定位表格
-%             \begin{minipage}{0.45\textwidth}
-%                 \scriptsize
-%                 \renewcommand{\arraystretch}{1.5} % 调整行高
-%                 \begin{tabular}{|c|c|c|c|c|c|c|c|}
-%                     \hline
-%                     \multicolumn{4}{|c|}{\textbf{Length}} & \multicolumn{4}{c|}{\textbf{Boundary condition}} \\
-%                     \hline
-%                     $L_x$ & $L_y$ & $L_c$ & $D$ & Top & Bottom & Left & Right \\
-%                     \hline
-%                     $10D$ & $30D$ & $0.9L_y$ & $D$ & Symm & Symm & Symm & Symm \\
-%                     \hline
-%                 \end{tabular}
-%             \end{minipage}
-%         }
-%     \end{overpic}
-%     % \caption{Drop deformation as a function of the Reynolds number.}
-%     \label{deformation}
-% \end{figure}
+In this part, we also performed the grid independence study, to confirm the best resolution which could balance the accuracy and the cost, which include the time and computational resource. The finest grid resolution we could finish in time is the one is 512x768, which actually cost 2 days in the computer to finish. After compare with 256x384, we find the 256x384 preform well, which means we could almost ignore the difference, and it could simulate and get result at high Eo.
 
 
 
@@ -433,161 +319,80 @@ In this part, we also performed the grid independence study, to confirm the best
 
 
 
-
-
-
-
-
-
-
-
-\section{Result, Compare, and Discussion}
-
-
-
-
-% \subsubsection{Grid Independence Study}
-
-
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.3\textwidth]{Latex/figures/Grid_ind.jpg}
-%     \caption{Drop deformation as a function of the Reynolds number.}
-%     \label{deformation}
-% \end{figure}
-
-% \subsubsection{Key Parameters Along time}
-
-
-
-
-% \begin{tabular}{|>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm} |>{\centering\arraybackslash}m{1cm}|}
-% \hline
-% \textbf{Eo} & 12 & 24 & 28.8 & 36 & 48 & 60 & 72 & 96 & 144 \\
-% \hline
-% \textbf{Last time $t^*$} & 11.19 & 15.82 & 14.85 & 13.83 & 11.19 & 7.15 & 7.83 & 6.78 & 5.54 \\
-% \hline
-% \end{tabular}
-
+\section{Results, Compare, and Discussion}
 
 \subsection{Breakup Map}
 
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{Latex/figures/Eo_effect.jpg}
-    \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
+    \includegraphics[width=0.6\textwidth]{figures/Eo_effect.jpg}
+    \caption{Drop deformation as a function of the Eötvös number.}
+    \label{fig:deformation}
 \end{figure}
 
-In the breakup map we obtained for 2D drop (or infinite cylinder drop in 3D), we could obtain the following observation:
+
+In the breakup map obtained for a 2D drop (or infinite cylinder in 3D), we observe the following trends:
+
 \begin{itemize}
-    \item Breakup forward (in the direction of drop moving) for Eo=12, Eo=24.
-    \item Breakup backward for Eo larger than 24, which called "disk-like" shape
+    \item Forward breakup (in the direction of the drop's motion) for Eo = 12 and Eo = 24.
+    \item Backward breakup for Eo > 24, leading to a "disk-like" shape.
 \end{itemize}
 
-In this case, Eo is controlled as the independent variable, representing the ratio of gravitational force to surface tension. The following observations can be made:\\
+When Eo is low (e.g., Eo = 12), gravitational forces dominate the motion of the falling drop. At this Eo value, surface tension remains strong enough to maintain the drop's shape for a time, but it eventually leads to a slow breakup. Initially, the drop exhibits a near-spherical shape, but as it falls, the pressure at the front-center increases, pushing fluid toward the edges. This leads to elongation and flattening, eventually resulting in a backward-facing bag. As Eo increases (e.g., Eo = 24), this process accelerates, and the edges flatten more rapidly, leading to the formation of a disk-like structure.
 
-When Eo is low (e.g., Eo = 12), gravitational forces play a dominant role in the motion of the falling drop. At this Eo value, surface tension is relatively strong but still insufficient to fully maintain the drop’s shape, resulting in a slow breakup. The highest pressure occurs at the front-center of the drop, pushing the fluid mass from the center toward the edges. The gravitational force, acting as a volume force, causes the edges to accelerate as the drop descends. Consequently, the center of the drop becomes thinner and moves upwards, creating what is known as a "backward-facing bag" structure.\\
-
-At high Eo values, surface tension is too weak to preserve the drop’s shape during the early stages of its motion. Initially, the drop exhibits deformation patterns similar to those observed at lower Eo values, with the front-center experiencing strong pressure that pushes the fluid mass outward toward the edges, thinning the center. However, at higher Eo values, the stronger gravitational force gives the drop a larger initial acceleration, causing the center to move faster than the edges. As the deformation progresses, the edges are pushed backwards. Simultaneously, the center retracts, forming a "narrow point" at the interface between the edge and center. This thinning eventually causes the drop to break apart, generating smaller droplets, which may lead to premature termination of the numerical simulation.
-
-
-% Because in this case, Oh=0.5, which means viscous force is only half of the surface tension, which means it could 
+At higher Eo values (e.g., Eo = 48 or above), surface tension is too weak to maintain the drop's shape. The drop initially forms a disk-like shape but soon retracts at the center, creating a narrow point between the edge and center. This thinning ultimately results in breakup, generating smaller droplets (shear breakup). These observations are consistent with experimental findings, though the exact breakup pattern may vary depending on the non-dimensional parameters.
 
 
 
-
-
-
-
-
-
-
-
+\subsection{Center Velocity and Aspect Ratio}
+Figure \ref{fig:velocity_aspect} shows the time evolution of the center velocity and aspect ratio for two different cases: (1) Eo = 12, Oh = 0.05, and (2) Eo = 28.8, Oh = 0.125, with a fixed density ratio $\rho_d / \rho_o = 10$.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Latex/figures/Trygg_allEo.jpg}
-    \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
+    \includegraphics[width=\textwidth]{figures/All_Eo=12__t=0.28.png}
+    \caption{Velocity and aspect ratio for Eo = 12, Oh = 0.05.}
+    \label{fig:velocity_aspect}
 \end{figure}
 
-
-
-
-
-Compare to Dr. Han and Dr. Tryggvason's research result in 3D (Axis-symmetric), we found for our 2D drop simulation(could be modeled as infinite cylinder), the evolution and break up actually occurred in the smaller Eo number, which could be explained by the difference of 2D and 3D scheme, however, the break up scheme is much similar.
-
-
-
-
-
-
-
-
-
-In general, the drop will first been squeezed and from circle to elliptic shape, then, the effect of Eo number become more easier to be observed. 
-
-
-% At low Eo, the drop's center will be pushed back by the front pressure, and it will become thinner, which make the drop's mass move to the edge, the breakup map shows as a "backward bag" form. s
-
-
-
-% At coarse grid, this will lead to simulation failure more easily. 
-
-
-
-\subsection{Center Velocity And Aspect Ration}
-
-
-
-Here we plot the center velocity and aspect ration vesus time, there are two condition were examined:  (1) Eo=12, Oh=0.05, (2) Eo=28.8, Oh=0.125, and for both cases, we keep $\rho_d/\rho_o$ = 10, the result is showing below:
-
+Initially, the drop's velocity increases due to gravity. As the drop deforms and drag forces build up, the velocity decreases. The aspect ratio exhibits minor changes at first but begins to drop as the edges flatten, reaching a minimum when the drop forms a bag-like structure.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Latex/figures/All_Eo=12__t=0.28.png}
-    \caption{Eo=12, Oh=0.05}
-    \label{deformation}
+    \includegraphics[width=\textwidth]{Latex/figures/All_Oh=1.25_t=0.44.png}
+    \caption{Velocity and aspect ratio for Eo = 28.8, Oh = 0.125.}
+    \label{fig:velocity_aspect}
 \end{figure}
 
-The falling drop's shape was not change a lot at the initial dropping (t* = (0,4)s), at the working done by gravity, its velocity increase. As its been pushed by pressure in front and "stretch" at the edge, the drag force's effect shows up and slow down (t*= (4,8)s). At the final stage, the mass of the drop been keep pushed and move to the drop edge, which shows falling bag shape.
+At the end of the simulation, we observe abnormal behavior in the velocity and aspect ratio curves. This is caused by the interaction between the drop's edge and the bottom boundary of the domain. As the drop's edge touches the boundary, velocity decreases sharply, and the aspect ratio calculation includes outer fluid, leading to an artificial increase. Future simulations could reduce these boundary effects by employing an extended domain or finer grid resolution near the boundaries.
 
 
-Should be noticed, at the end of our simlation shows in the figure, the center velocity and aspect ration shows abnormal behaviour, which could be explained by following:
-\begin{itemize}
-    \item Center velocity: the edge of the drop actually "touched" the bottom of the domain and this caused the velocity decrease. 
-    \item Aspect ratio: we comput the aspect ratio use the "edge" of the drop, which actually obtained its total height and total width. This is not that accurate as the drop's mass move to the edge and that makes edge falling down, which makes our calculate actually include the outer fluid, which makes the aspect ration final increase.
-\end{itemize}
 
 
-\subsection{Center Velocity at different Eo}
-In the previous section, we put center velocity versus $t^*$ for the drops. Here, the similar results are presented for different Eo, to compare Eo's effect on the center velocity. Still, we keep $\rho_d/\rho_o$ = 10, $Oh_o=Oh_d$= 0.05:
+
+\subsection{Center Velocity at Different Eo Values}
+Figure \ref{fig:velocity_comparison} compares the center velocity at different Eo values (Eo = 12,24, 72) to illustrate the effect of increasing Eötvös numbers on the drop’s motion. As Eo increases, the drop's velocity decreases more rapidly, indicating that greater deformation and increased drag slow down the drop more significantly at higher Eo values. For lower Eo values (e.g., Eo = 12), the drop maintains its velocity for a longer period before experiencing significant deformation, resulting in a smoother decrease in velocity.
+
+The comparison also highlights a key difference between 2D and 3D simulations. In 2D simulations like ours, the absence of an axis of symmetry results in lower drag, allowing the drop to move faster than in 3D cases. This explains why our velocity magnitudes are slightly higher than those reported in axisymmetric 3D simulations, such as those by Han and Tryggvason (1999). Nonetheless, the overall trends are consistent.
 
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Latex/figures/velocity_profile_compare.jpg}
-        \caption{Our drop's centroid velocity versus $t^*$ for the drops, Eo =12, 24, 72}
-        \label{fig:deformation1}
+        \includegraphics[width=\textwidth]{figures/velocity_profile_compare.jpg}
+        \caption{Center velocity vs. time for Eo = 12, 24, 72.}
+        \label{fig:velocity_comparison}
     \end{minipage}
     \hspace{0.05\textwidth}
-    % \hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Latex/figures/Trygg_allEo_velo.jpeg}
-        \caption{Han and Tryggvason (1999) \cite{han1999axisymmetric}, Eo =12, 24, 28.8, 36, 48, 60, 72, 96, and 144}
-        \label{fig:deformation2}
+        \includegraphics[width=\textwidth]{figures/Trygg_allEo_velo.jpeg}
+        \caption{Han and Tryggvason (1999) velocity comparison for various Eo.}
+        \label{fig:trygg_comparison}
     \end{minipage}
 \end{figure}
 
-
-Could see, our result shows very similar to Dr. Tryggvason's result, where as Eo increase, the drop move slower, which because the drop actually deform "less", and that makes it have lower drag and move faster than high Eo, where we can observed that higher Eo's velocity decrease much early and it happens when the visible deformation start to occur. \\
-
-The only thing different with the reference is th velocity magnitiude, which is because Dr. Tryggvason actually simulate the axis-symmetic (3D) drop, where we just simulated 2D drop. 
-
-
+Our results are qualitatively similar to those reported in Han and Tryggvason’s 3D simulations, showing that higher Eo leads to faster deformation and more rapid velocity reduction. As the drop becomes more deformed, its drag increases, slowing down the drop at a much earlier stage than at lower Eo values. While our simulations capture the essential physics of the problem, future work should aim to extend the model to 3D to further validate the results and achieve closer agreement with experimental data.
 
 
 
@@ -606,75 +411,3 @@ The only thing different with the reference is th velocity magnitiude, which is 
 
 
 
-
-
-
-
-
-
-
-For this simulation, we chose $Re = 100$ and $Bo = 10$, which provide a computationally convenient yet physically relevant scenario.
-
-\section{Numerical Method}
-The simulation was carried out using the Volume of Fluid (VOF) method implemented in COMSOL/Matlab. A coarse grid was used to expedite computations, with grid refinement studies ensuring the accuracy of the results.
-
-\section{Results}
-The following figures show the transient evolution of the drop as it falls through the fluid. The shape of the drop changes as a function of time due to gravity and surface tension.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{drop_fall_frame1.png}
-    \caption{Drop shape at $t = 0.1s$.}
-\end{figure}
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{drop_fall_frame2.png}
-    \caption{Drop shape at $t = 0.5s$.}
-\end{figure}
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{drop_fall_frame3.png}
-    \caption{Drop shape at $t = 1.0s$.}
-\end{figure}
-
-In addition, the evolution of the drop's centroid location over time is shown in Figure \ref{centroid}. The falling velocity and the influence of surface tension are clearly visible.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{centroid_vs_time.png}
-    \caption{Centroid location of the drop as a function of time.}
-    \label{centroid}
-\end{figure}
-
-\section{Grid Refinement Study}
-To ensure accuracy, a grid refinement study was conducted by comparing the results on coarse and fine grids. Figure \ref{refinement} shows that the solution converges as the grid is refined, confirming the accuracy of the coarse grid results used for computational efficiency.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{grid_refinement.png}
-    \caption{Grid refinement study showing convergence of the solution.}
-    \label{refinement}
-\end{figure}
-
-\section{Effect of Varying Nondimensional Numbers}
-Additional simulations were performed to study the effect of varying the Reynolds and Bond numbers. For example, increasing the Reynolds number from 100 to 200 resulted in more pronounced deformation of the falling drop, as illustrated in Figure \ref{deformation}.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{deformation_vs_re.png}
-    \caption{Drop deformation as a function of the Reynolds number.}
-    \label{deformation}
-\end{figure}
-
-\section{Discussion}
-The results show that the drop falls with increasing deformation as the Reynolds number increases, consistent with earlier studies. The use of a coarse grid allowed for fast simulations, and grid refinement confirmed the accuracy of the results. Further work could explore the impact of surface tension and drop-wall interactions in more detail.
-
-\section{Conclusion}
-This simulation demonstrated the transient evolution of a falling drop in a two-fluid system. By selecting computationally convenient parameters, accurate results were obtained on a coarse grid. Future work could explore more complex drop behaviors or interactions with solid boundaries.
-
-\bibliographystyle{plain}
-\bibliography{references}
-
-\end{document}
