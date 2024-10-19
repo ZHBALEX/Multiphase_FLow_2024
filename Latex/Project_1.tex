@@ -73,7 +73,7 @@
 
 
 \begin{abstract}
-This study presents numerical simulations of a falling liquid drop through another fluid using the Front Tracking method to accurately capture interface dynamics. The incompressible Navier-Stokes equations are solved to investigate the effects of varying Eötvös numbers ($Eo$) and Ohnesorge numbers ($Oh$) on the drop's deformation, velocity, and breakup behavior. A grid independence study ensures the accuracy of the results. Simulations reveal that higher $Eo$ leads to increased deformation and earlier breakup, while $Oh$ influences viscous effects on drop dynamics. Comparisons with existing literature validate the model, providing insights applicable to processes like rainfall formation, inkjet printing, and spray cooling.
+This study presents numerical simulations of a falling liquid drop through another fluid using the Front Tracking method to accurately capture interface dynamics. The incompressible Navier-Stokes equations are solved, and characteristic parameters were set up to investigate the effects of varying Eötvös numbers ($Eo$) and Ohnesorge numbers ($Oh$) on the drop's deformation, velocity, and breakup behavior. A grid independence study ensures the accuracy of the results. Simulations reveal that higher $Eo$ leads to increased deformation and earlier breakup. Comparisons with existing literature validate the model, we now have better understanding of the falling drop behaviour and the effect of domain non-dimensional numbers and the forces behind them.
 \end{abstract}
 
 
@@ -292,7 +292,7 @@ In this part, we also performed the grid independence study to confirm the best 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/Eo_effect.jpg}
-    \caption{Drop deformation as a function of the Eötvös number.}
+    \caption{Drop breakup map using different Eötvös number.}
     \label{fig:deformation}
 \end{figure}
 
@@ -306,6 +306,22 @@ In the breakup map obtained for a 2D drop (or infinite cylinder in 3D), we obser
 When $Eo$ is low (e.g., $Eo = 12$), gravitational forces dominate the motion of the falling drop. At this $Eo$ value, surface tension remains strong enough to maintain the drop's shape for a time, but it eventually leads to a slow breakup. Initially, the drop exhibits a near-spherical shape, but as it falls, the pressure at the front-center increases, pushing fluid toward the edges. This leads to elongation and flattening, eventually resulting in a backward-facing bag. As $Eo$ increases (e.g., $Eo = 24$), this process accelerates, and the edges flatten more rapidly, leading to the formation of a disk-like structure.
 
 At higher $Eo$ values (e.g., $Eo = 48$ or above), surface tension is too weak to maintain the drop's shape. The drop initially forms a disk-like shape but soon retracts at the center, creating a narrow point between the edge and center. This thinning ultimately results in breakup, generating smaller droplets (shear breakup). These observations are consistent with experimental findings, though the exact breakup pattern may vary depending on the non-dimensional parameters.
+\subsubsection{Compare to Axis-symmetric Simulation}
+
+
+
+Compared to Dr. Han and Dr. Tryggvason's research results in 3D (axisymmetric), we found that in our 2D drop simulation (which can be modeled as an infinite cylinder), the evolution and breakup actually occurred at a smaller Eo number. This can be explained by the differences between the 2D and 3D schemes; however, the breakup patterns are quite similar.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Latex/figures/Trygg_allEo.jpg}
+    \caption{Han and Tryggvason (1999) Axis-symmetric Breakup Map\cite{han1999axisymmetric}}
+    \label{fig:deformation}
+\end{figure}
+
+
+
 
 \subsection{Center Velocity and Aspect Ratio}
 Figure \ref{fig:velocity_aspect} shows the time evolution of the center velocity and aspect ratio for two different cases: (1) $Eo = 12$, $Oh = 0.05$, and (2) $Eo = 28.8$, $Oh = 0.125$, with a fixed density ratio $\rho_d / \rho_o = 10$.
